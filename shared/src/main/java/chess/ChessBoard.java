@@ -10,7 +10,7 @@ public class ChessBoard {
     private ChessPiece[][] board;
 
     public ChessBoard() {
-        board = new ChessPiece[9][9];
+        board = new ChessPiece[8][8];
     }
 
     /**
@@ -46,6 +46,6 @@ public class ChessBoard {
      */
     public void resetBoard() {
 //        throw new RuntimeException("Not implemented");
-        board = new ChessPiece[9][9];
+        board = new ChessPiece[8][8];
     }
 }
