@@ -10,9 +10,13 @@ public class ChessPosition {
     int row;
     int col;
 
+    int temp_row;
+    int temp_col;
+
+
     public ChessPosition(int row, int col) {
-        this.row = row;
-        this.col = col;
+        this.row = row -1;
+        this.col = col -1;
     }
 
     /**
@@ -21,7 +25,7 @@ public class ChessPosition {
      */
     public int getRow() {
 //        throw new RuntimeException("Not implemented");
-        return row -1;
+        return row;
     }
 
     /**
@@ -30,6 +34,6 @@ public class ChessPosition {
      */
     public int getColumn() {
 //        throw new RuntimeException("Not implemented");
-        return col -1;
+        return col;
     }
 }
