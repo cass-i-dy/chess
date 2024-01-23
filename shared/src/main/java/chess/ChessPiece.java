@@ -71,7 +71,7 @@ public class ChessPiece {
 
 
 
-    public static boolean isValid(ChessBoard board, ChessPosition position) {
+    public boolean isValid(ChessBoard board, ChessPosition position) {
         int row = position.getRow();
         int col = position.getColumn();
         if (row > 8 || row < 1) {
@@ -83,7 +83,7 @@ public class ChessPiece {
         return true;
     }
 
-    public static boolean isTeam(ChessBoard board, ChessPosition position, ChessPosition myPosition){
+    public boolean isTeam(ChessBoard board, ChessPosition position, ChessPosition myPosition){
         if (board.getPiece(position) == null) {
             return true;
         }
@@ -336,9 +336,18 @@ public class ChessPiece {
             position = new ChessPosition(row + 1, col);
             if (isValid(board, position)) {
                 if (board.getPiece(position) == null) {
-                    moves.add(new ChessMove(myPosition, position, null));
+                    if ((row +1) == 8) {
+                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                    } else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
                 }
+
             }
+            // Double Up Initial
             if (row == 2) {
                 double_position = new ChessPosition(row + 2, col);
                 if (board.getPiece(position) == null && board.getPiece(double_position) == null) {
@@ -346,17 +355,33 @@ public class ChessPiece {
                 }
             }
 
+
+
             // Top Right
             position = new ChessPosition(row + 1, col + 1);
             if (isValid(board, position) && !isTeam(board, position, myPosition)){
-                moves.add(new ChessMove(myPosition, position, null));
+                    if ((row + 1) == 8) {
+                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                    } else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
 
             }
 
             // Top Left
             position = new ChessPosition(row + 1, col - 1);
             if (isValid(board, position) && !isTeam(board, position, myPosition)){
-                moves.add(new ChessMove(myPosition, position, null));
+                    if ((row - 1) == 1) {
+                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                    } else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
 
             }
         }
@@ -366,7 +391,14 @@ public class ChessPiece {
             position = new ChessPosition(row - 1, col);
             if (isValid(board, position)) {
                 if (board.getPiece(position) == null) {
-                    moves.add(new ChessMove(myPosition, position, null));
+                    if ((row - 1) == 1) {
+                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                    } else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
                 }
             }
 
@@ -380,7 +412,14 @@ public class ChessPiece {
             // Top Right
             position = new ChessPosition(row - 1, col - 1);
             if (isValid(board, position) && !isTeam(board, position, myPosition)) {
-                moves.add(new ChessMove(myPosition, position, null));
+                if ((row - 1) == 1) {
+                    moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                    moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                } else {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
 
             }
 
@@ -388,8 +427,14 @@ public class ChessPiece {
             // Top Left
             position = new ChessPosition(row - 1, col + 1);
             if (isValid(board, position) && !isTeam(board, position, myPosition)) {
-                moves.add(new ChessMove(myPosition, position, null));
-
+                    if ((row - 1) == 1) {
+                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+                    } else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
             }
         }
         return moves;
