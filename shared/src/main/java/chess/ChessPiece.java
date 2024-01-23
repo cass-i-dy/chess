@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -13,6 +15,18 @@ public class ChessPiece {
     ChessGame.TeamColor pieceColor;
     ChessPiece.PieceType type;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -54,6 +68,9 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+
+
     public static boolean isValid(ChessBoard board, ChessPosition position) {
         int row = position.getRow();
         int col = position.getColumn();
@@ -63,12 +80,15 @@ public class ChessPiece {
         if (col > 8 || col < 1) {
             return false;
         }
-        if (board.getPiece(position) == null) {
-            return false;
-        }
         return true;
     }
 
+    public static boolean isTeam(ChessBoard board, ChessPosition position, ChessPosition myPosition){
+        if (board.getPiece(position).getTeamColor() == board.getPiece(myPosition).getTeamColor()){
+            return true;
+        }
+        return false;
+    }
 
     public Collection<ChessMove> queenMove(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
         ChessPosition position;
@@ -82,7 +102,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Row Down
@@ -93,7 +113,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Col Right
@@ -104,7 +124,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Col Left
@@ -115,12 +135,10 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
-        int row;
-        int col;
-        ChessPosition position;
+
         // Diagonal moves to bottom left
         for (int i = 1; i <= 9; i++) {
             row = myPosition.getRow() - i;
@@ -129,7 +147,7 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Diagonal Moves to bottom right
@@ -140,7 +158,7 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Diagonal moves top left
@@ -151,7 +169,7 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Diagonal moves top right
@@ -162,7 +180,7 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         return moves;
@@ -182,7 +200,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Row Down
@@ -193,7 +211,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Col Right
@@ -204,7 +222,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Col Left
@@ -215,7 +233,7 @@ public class ChessPiece {
             if (!isValid(board, position)){
                 break;
             }
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         return moves;
@@ -232,18 +250,18 @@ public class ChessPiece {
         // Top Right
         position = new ChessPosition(row + 1, col + 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
         // Up
         position = new ChessPosition(row + 1, col);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Top Left
         position = new ChessPosition(row + 1, col - 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
         return moves;
     }
@@ -260,55 +278,50 @@ public class ChessPiece {
         // Tall Up Right
         position = new ChessPosition(row + 2, col + 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Tall Up Left
         position = new ChessPosition(row + 2, col - 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Short Right Down
         position = new ChessPosition(row -1, col + 2);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Short Right Up
         position = new ChessPosition(row +1, col + 2);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Tall down Right
         position = new ChessPosition(row - 2, col + 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Tall down Left
         position = new ChessPosition(row - 2, col - 1);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Short Left Down
         position = new ChessPosition(row -1, col - 2);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Short Left Up
         position = new ChessPosition(row + 1, col - 2);
         if (isValid(board, position)){
-            moves.add(position);
+            moves.add(new ChessMove(myPosition, position, null));
         }
-
-
-
-
-
 
 
         return moves;
@@ -324,44 +337,98 @@ public class ChessPiece {
 
         // Diagonal up Right
         position = new ChessPosition(row + 1, col + 1);
-        if (isValid(board, position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Right
         position = new ChessPosition(row, col + 1);
-        if (isValid(board, position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Diagonal down right
         position = new ChessPosition(row - 1, col + 1);
-        if (isValid(board, position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // down
         position = new ChessPosition(row - 1, col );
-        if (isValid(board, position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Diagonal down left
         position = new ChessPosition(row - 1, col - 1);
-        if (isValid(board,  position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Left
+        position = new ChessPosition(row, col - 1);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
+        }
+
+        // Diagonal left up
         position = new ChessPosition(row + 1, col - 1);
-        if (isValid(board,  position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Up
         position = new ChessPosition(row + 1, col);
-        if (isValid(board,  position)){
-            moves.add(position);
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         return moves;
@@ -380,21 +447,17 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+                break;
+            }
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Diagonal Moves to bottom right
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() + i;
-            col = myPosition.getColumn() - i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            moves.add(position);
-        }
-
-        // Diagonal moves top left
         for (int i = 1; i <= 9; i++) {
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() + i;
@@ -402,7 +465,32 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+                break;
+            }
+            moves.add(new ChessMove(myPosition, position, null));
+        }
+
+        // Diagonal moves top left
+        for (int i = 1; i <= 9; i++) {
+            row = myPosition.getRow() + i;
+            col = myPosition.getColumn() - i;
+            position = new ChessPosition(row, col);
+            if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+                break;
+            }
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         // Diagonal moves top right
@@ -413,27 +501,44 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
-            moves.add(position);
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+                break;
+            }
+            moves.add(new ChessMove(myPosition, position, null));
         }
 
         return moves;
     }
 
 
-//        int row = myPosition.getRow();
-//        int col = myPosition.getColumn();
-//        if (!isValid(board, myPosition, row, col)){
-//            return moves;
-//        }
-//        moves.add
-//        return bishopMoves(board, myPosition , row-1, col-1, moves)
-//
-//    }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 //        throw new RuntimeException("Not implemented");
-        Collection<ChessMove> moves = new ArrayList<>();
-        bishopMoves(board, myPosition, moves);
+        Collection<ChessMove> moves = new HashSet<>();
+
+        if (type == PieceType.BISHOP) {
+            bishopMoves(board, myPosition, moves);
+        }
+        if (type == PieceType.KNIGHT) {
+            knightMoves(board, myPosition, moves);
+        }
+        if (type == PieceType.ROOK) {
+            rookMove(board, myPosition, moves);
+        }
+        if (type == PieceType.PAWN) {
+            pawnMoves(board, myPosition, moves);
+        }
+        if (type == PieceType.QUEEN) {
+            queenMove(board, myPosition, moves);
+        }
+        if (type == PieceType.KING) {
+            kingMoves(board, myPosition, moves);
+        }
+
         return moves;
     }
 }
