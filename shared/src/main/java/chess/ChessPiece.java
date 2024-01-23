@@ -326,22 +326,31 @@ public class ChessPiece {
         int row;
         int col;
         ChessPosition position;
+        ChessPosition double_position;
 
         row = myPosition.getRow();
         col = myPosition.getColumn();
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE ) {
-            // Top Right
-            position = new ChessPosition(row + 1, col + 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)){
-                moves.add(new ChessMove(myPosition, position, null));
 
-            }
-            // Up
+            //UP
             position = new ChessPosition(row + 1, col);
             if (isValid(board, position)) {
                 if (board.getPiece(position) == null) {
                     moves.add(new ChessMove(myPosition, position, null));
                 }
+            }
+            if (row == 2) {
+                double_position = new ChessPosition(row + 2, col);
+                if (board.getPiece(position) == null && board.getPiece(double_position) == null) {
+                    moves.add(new ChessMove(myPosition, double_position, null));
+                }
+            }
+
+            // Top Right
+            position = new ChessPosition(row + 1, col + 1);
+            if (isValid(board, position) && !isTeam(board, position, myPosition)){
+                moves.add(new ChessMove(myPosition, position, null));
+
             }
 
             // Top Left
@@ -353,13 +362,6 @@ public class ChessPiece {
         }
 
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
-            // Top Right
-            position = new ChessPosition(row - 1, col - 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)) {
-                moves.add(new ChessMove(myPosition, position, null));
-
-            }
-
             // Forward
             position = new ChessPosition(row - 1, col);
             if (isValid(board, position)) {
@@ -367,6 +369,21 @@ public class ChessPiece {
                     moves.add(new ChessMove(myPosition, position, null));
                 }
             }
+
+            // Double Forward
+            if (row == 7) {
+                double_position = new ChessPosition(row - 2, col);
+                if (board.getPiece(double_position) == null && board.getPiece(position) == null) {
+                    moves.add(new ChessMove(myPosition, double_position, null));
+                }
+            }
+            // Top Right
+            position = new ChessPosition(row - 1, col - 1);
+            if (isValid(board, position) && !isTeam(board, position, myPosition)) {
+                moves.add(new ChessMove(myPosition, position, null));
+
+            }
+
 
             // Top Left
             position = new ChessPosition(row - 1, col + 1);
