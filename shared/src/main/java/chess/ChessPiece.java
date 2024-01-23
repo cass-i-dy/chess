@@ -322,8 +322,6 @@ public class ChessPiece {
         if (isValid(board, position)){
             moves.add(new ChessMove(myPosition, position, null));
         }
-
-
         return moves;
     }
 
