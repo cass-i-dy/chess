@@ -12,20 +12,18 @@ public class ChessPosition {
     int row;
     int col;
 
-    int temp_row;
-    int temp_col;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPosition that = (ChessPosition) o;
-        return row == that.row && col == that.col && temp_row == that.temp_row && temp_col == that.temp_col;
+        return row == that.row && col == that.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, col, temp_row, temp_col);
+        return Objects.hash(row, col);
     }
 
     public ChessPosition(int row, int col) {
