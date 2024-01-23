@@ -97,12 +97,18 @@ public class ChessPiece {
         ChessPosition position;
         int row;
         int col;
-        // Row Up
         for (int i = 1; i <= 8; i++){
             row = myPosition.getRow();
             col = myPosition.getColumn();
             position = new ChessPosition(row+i, col);
-            if (!isValid(board, position)){
+            if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -113,7 +119,14 @@ public class ChessPiece {
             row = myPosition.getRow();
             col = myPosition.getColumn();
             position = new ChessPosition(row-i, col);
-            if (!isValid(board, position)){
+            if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -124,7 +137,14 @@ public class ChessPiece {
             row = myPosition.getRow();
             col = myPosition.getColumn();
             position = new ChessPosition(row, col+i);
-            if (!isValid(board, position)){
+            if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -135,19 +155,31 @@ public class ChessPiece {
             row = myPosition.getRow();
             col = myPosition.getColumn();
             position = new ChessPosition(row, col-i);
-            if (!isValid(board, position)){
+            if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
         }
 
-
-        // Diagonal moves to bottom left
         for (int i = 1; i <= 9; i++) {
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() - i;
             position = new ChessPosition(row, col);
             if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -155,10 +187,17 @@ public class ChessPiece {
 
         // Diagonal Moves to bottom right
         for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() + i;
-            col = myPosition.getColumn() - i;
+            row = myPosition.getRow() - i;
+            col = myPosition.getColumn() + i;
             position = new ChessPosition(row, col);
             if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -166,10 +205,17 @@ public class ChessPiece {
 
         // Diagonal moves top left
         for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() - i;
-            col = myPosition.getColumn() + i;
+            row = myPosition.getRow() + i;
+            col = myPosition.getColumn() - i;
             position = new ChessPosition(row, col);
             if (!isValid(board, position)) {
+                break;
+            }
+            if (board.getPiece(position) != null){
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
                 break;
             }
             moves.add(new ChessMove(myPosition, position, null));
@@ -183,9 +229,15 @@ public class ChessPiece {
             if (!isValid(board, position)) {
                 break;
             }
+            if (board.getPiece(position) != null) {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+                break;
+            }
             moves.add(new ChessMove(myPosition, position, null));
         }
-
         return moves;
     }
 
