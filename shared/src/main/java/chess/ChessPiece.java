@@ -277,50 +277,98 @@ public class ChessPiece {
 
         // Tall Up Right
         position = new ChessPosition(row + 2, col + 1);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Tall Up Left
         position = new ChessPosition(row + 2, col - 1);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Short Right Down
         position = new ChessPosition(row -1, col + 2);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Short Right Up
         position = new ChessPosition(row +1, col + 2);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Tall down Right
         position = new ChessPosition(row - 2, col + 1);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Tall down Left
         position = new ChessPosition(row - 2, col - 1);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Short Left Down
         position = new ChessPosition(row -1, col - 2);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
 
         // Short Left Up
         position = new ChessPosition(row + 1, col - 2);
-        if (isValid(board, position)){
-            moves.add(new ChessMove(myPosition, position, null));
+        if (isValid(board, position)) {
+            if (board.getPiece(position) == null) {
+                moves.add(new ChessMove(myPosition, position, null));
+            } else {
+                if (!isTeam(board, position, myPosition)) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
         }
         return moves;
     }
