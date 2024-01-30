@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -12,20 +11,25 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    Collection<ChessMove> moves;
     ChessGame.TeamColor pieceColor;
     ChessPiece.PieceType type;
+
+    int row;
+
+    int col;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && type == that.type;
+        return Objects.equals(moves, that.moves) && pieceColor == that.pieceColor && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pieceColor, type);
+        return Objects.hash(moves, pieceColor, type);
     }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -61,701 +65,417 @@ public class ChessPiece {
         return type;
     }
 
-    /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger
-     *
-     * @return Collection of valid moves
-     */
-
-
-
-    public boolean isValid(ChessBoard board, ChessPosition position) {
-        int row = position.getRow();
-        int col = position.getColumn();
-        if (row > 8 || row < 1) {
+    public boolean isValid (int row, int col){
+        if ((row < 1) || (row > 8)){
             return false;
         }
-        if (col > 8 || col < 1) {
+        if ((col < 1) || (col > 8)){
             return false;
         }
         return true;
     }
 
-    public boolean isTeam(ChessBoard board, ChessPosition position, ChessPosition myPosition){
-        if (board.getPiece(position) == null) {
-            return true;
-        }
-        if (board.getPiece(position).getTeamColor() == board.getPiece(myPosition).getTeamColor()){
+    public boolean isEmpty(ChessBoard board, ChessPosition position){
+        if ((board.getPiece(position)) == null){
             return true;
         }
         return false;
     }
 
-    public Collection<ChessMove> queenMove(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
-        ChessPosition position;
-        int row;
-        int col;
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row+i, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+    public boolean isTeam(ChessBoard board, ChessPosition position){
+        if (board.getPiece(position).getTeamColor() == pieceColor){
+            return true;
+        }
+        return false;
+    }
+
+    public void promotion(ChessPosition myPosition, ChessPosition position, Collection<ChessMove> moves){
+        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
+        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
+        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
+        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
+    }
+
+    public boolean isPromotion(ChessPosition myPosition, ChessPosition position, Collection<ChessMove> moves){
+        if ((position.getRow() == 8) || position.getRow() == 1){
+            return true;
+        }
+        return false;
+
+    }
+
+    public void pawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
+        row = myPosition.getRow();
+        col = myPosition.getColumn();
+
+        // White
+        if (pieceColor == ChessGame.TeamColor.WHITE){
+            //Up
+            ChessPosition position = new ChessPosition(row+1,col);
+            if (isEmpty(board,position)) {
+                if (isPromotion(myPosition, position, moves)){
+                    promotion(myPosition, position, moves);
                 }
-                break;
+                else if (row == 2) {
+                    ChessPosition temp_position = new ChessPosition(row + 2, col);
+                    if (isEmpty(board, temp_position)) {
+                        moves.add(new ChessMove(myPosition, position, null));
+                        moves.add(new ChessMove(myPosition, temp_position, null));
+                    }
+                    else {
+                        moves.add(new ChessMove(myPosition, position, null));
+                    }
+                }
+                else{
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+
             }
-            moves.add(new ChessMove(myPosition, position, null));
+
+
+
+            // Diagonal Right
+            if (isValid(row+1, col+1)){
+                position = new ChessPosition(row+1, col+1);
+                if (!isEmpty(board, position)){
+                    if (!isTeam(board, position)){
+                        if (isPromotion(myPosition, position, moves)){
+                            promotion(myPosition, position, moves);
+                        } else {
+                            moves.add(new ChessMove(myPosition, position, null));
+                        }
+                    }
+                }
+
+            }
+
+            // Diagonal Left
+            if (isValid(row+1, col-1)){
+                position = new ChessPosition(row+1, col-1);
+                if (!isEmpty(board, position)){
+                    if (!isTeam(board, position)){
+                        if (isPromotion(myPosition, position, moves)){
+                            promotion(myPosition, position, moves);
+                        } else {
+                            moves.add(new ChessMove(myPosition, position, null));
+                        }
+                    }
+                }
+
+            }
         }
 
-        // Row Down
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row-i, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+        // Black
+        if (pieceColor == ChessGame.TeamColor.BLACK){
+            //Up
+            ChessPosition position = new ChessPosition(row-1,col);
+            if (isEmpty(board,position)) {
+                if (isPromotion(myPosition, position, moves)){
+                    promotion(myPosition, position, moves);
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
+                else if (row == 7) {
+                    ChessPosition temp_position = new ChessPosition(row - 2, col);
+                    if (isEmpty(board, temp_position)) {
+                        moves.add(new ChessMove(myPosition, position, null));
+                        moves.add(new ChessMove(myPosition, temp_position, null));
+                    }
+                    else{
+                        moves.add(new ChessMove(myPosition, position, null));
 
-        // Col Right
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row, col+i);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+                    }
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        // Col Left
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row, col-i);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
-                    break;
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
 
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() - i;
-            col = myPosition.getColumn() - i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
             }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+
+
+
+            // Diagonal Left
+            if (isValid(row-1, col-1)){
+                position = new ChessPosition(row-1, col-1);
+                if (!isEmpty(board, position)){
+                    if (!isTeam(board, position)){
+                        if (isPromotion(myPosition, position, moves)){
+                            promotion(myPosition, position, moves);
+                        } else {
+                            moves.add(new ChessMove(myPosition, position, null));
+                        }
+                    }
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
 
-        // Diagonal Moves to bottom right
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() - i;
-            col = myPosition.getColumn() + i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
             }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+
+            // Diagonal Right
+            if (isValid(row-1, col+1)){
+                position = new ChessPosition(row-1, col+1);
+                if (!isEmpty(board, position)){
+                    if (!isTeam(board, position)){
+                        if (isPromotion(myPosition, position, moves)){
+                            promotion(myPosition, position, moves);
+                        } else {
+                            moves.add(new ChessMove(myPosition, position, null));
+                        }
+                    }
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
 
-        // Diagonal moves top left
-        for (int i = 1; i <= 9; i++) {
+            }
+        }
+    }
+
+    public void rookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
+
+        // Up
+        for (int i=1; i<8; i++){
             row = myPosition.getRow() + i;
-            col = myPosition.getColumn() - i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        // Diagonal moves top right
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() + i;
-            col = myPosition.getColumn() + i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null) {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-        return moves;
-    }
-
-
-
-    public Collection<ChessMove> rookMove(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
-        ChessPosition position;
-        int row;
-        int col;
-        // Row Up
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
             col = myPosition.getColumn();
-            position = new ChessPosition(row+i, col);
-            if (!isValid(board, position)) {
+            if (!isValid(row,col)){
                 break;
             }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
                     break;
                 }
-                break;
             }
             moves.add(new ChessMove(myPosition, position, null));
+
         }
 
-        // Row Down
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
+        // Down
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow() - i;
             col = myPosition.getColumn();
-            position = new ChessPosition(row-i, col);
-            if (!isValid(board, position)) {
+            if (!isValid(row,col)){
                 break;
             }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
                     break;
                 }
-                break;
             }
             moves.add(new ChessMove(myPosition, position, null));
-        }
 
-        // Col Right
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row, col+i);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        // Col Left
-        for (int i = 1; i <= 8; i++){
-            row = myPosition.getRow();
-            col = myPosition.getColumn();
-            position = new ChessPosition(row, col-i);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        return moves;
-    }
-
-    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
-        int row;
-        int col;
-        ChessPosition position;
-        ChessPosition double_position;
-
-        row = myPosition.getRow();
-        col = myPosition.getColumn();
-        if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE ) {
-
-            //UP
-            position = new ChessPosition(row + 1, col);
-            if (isValid(board, position)) {
-                if (board.getPiece(position) == null) {
-                    if ((row +1) == 8) {
-                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                    } else {
-                        moves.add(new ChessMove(myPosition, position, null));
-                    }
-                }
-
-            }
-            // Double Up Initial
-            if (row == 2) {
-                double_position = new ChessPosition(row + 2, col);
-                if (board.getPiece(position) == null && board.getPiece(double_position) == null) {
-                    moves.add(new ChessMove(myPosition, double_position, null));
-                }
-            }
-
-
-
-            // Top Right
-            position = new ChessPosition(row + 1, col + 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)){
-                    if ((row + 1) == 8) {
-                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                    } else {
-                        moves.add(new ChessMove(myPosition, position, null));
-                    }
-
-            }
-
-            // Top Left
-            position = new ChessPosition(row + 1, col - 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)){
-                    if ((row - 1) == 1) {
-                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                    } else {
-                        moves.add(new ChessMove(myPosition, position, null));
-                    }
-
-            }
-        }
-
-        if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
-            // Forward
-            position = new ChessPosition(row - 1, col);
-            if (isValid(board, position)) {
-                if (board.getPiece(position) == null) {
-                    if ((row - 1) == 1) {
-                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                    } else {
-                        moves.add(new ChessMove(myPosition, position, null));
-                    }
-                }
-            }
-
-            // Double Forward
-            if (row == 7) {
-                double_position = new ChessPosition(row - 2, col);
-                if (board.getPiece(double_position) == null && board.getPiece(position) == null) {
-                    moves.add(new ChessMove(myPosition, double_position, null));
-                }
-            }
-            // Top Right
-            position = new ChessPosition(row - 1, col - 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)) {
-                if ((row - 1) == 1) {
-                    moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                } else {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-
-            }
-
-
-            // Top Left
-            position = new ChessPosition(row - 1, col + 1);
-            if (isValid(board, position) && !isTeam(board, position, myPosition)) {
-                    if ((row - 1) == 1) {
-                        moves.add(new ChessMove(myPosition, position, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, position, PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, position, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, position, PieceType.ROOK));
-                    } else {
-                        moves.add(new ChessMove(myPosition, position, null));
-                    }
-            }
-        }
-        return moves;
-    }
-
-    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
-        int row;
-        int col;
-        ChessPosition position;
-
-        row = myPosition.getRow();
-        col = myPosition.getColumn();
-
-        // Tall Up Right
-        position = new ChessPosition(row + 2, col + 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Tall Up Left
-        position = new ChessPosition(row + 2, col - 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Short Right Down
-        position = new ChessPosition(row -1, col + 2);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Short Right Up
-        position = new ChessPosition(row +1, col + 2);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Tall down Right
-        position = new ChessPosition(row - 2, col + 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Tall down Left
-        position = new ChessPosition(row - 2, col - 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Short Left Down
-        position = new ChessPosition(row -1, col - 2);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Short Left Up
-        position = new ChessPosition(row + 1, col - 2);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-        return moves;
-    }
-
-    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
-        int row;
-        int col;
-        ChessPosition position;
-
-        row = myPosition.getRow();
-        col = myPosition.getColumn();
-
-        // Diagonal up Right
-        position = new ChessPosition(row + 1, col + 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
         }
 
         // Right
-        position = new ChessPosition(row, col + 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow();
+            col = myPosition.getColumn() + i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
+                    break;
                 }
             }
-        }
+            moves.add(new ChessMove(myPosition, position, null));
 
-        // Diagonal down right
-        position = new ChessPosition(row - 1, col + 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // down
-        position = new ChessPosition(row - 1, col );
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        // Diagonal down left
-        position = new ChessPosition(row - 1, col - 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
         }
 
         // Left
-        position = new ChessPosition(row, col - 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow();
+            col = myPosition.getColumn() - i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
+                    break;
                 }
             }
-        }
+            moves.add(new ChessMove(myPosition, position, null));
 
-        // Diagonal left up
-        position = new ChessPosition(row + 1, col - 1);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
         }
-
-        // Up
-        position = new ChessPosition(row + 1, col);
-        if (isValid(board, position)) {
-            if (board.getPiece(position) == null) {
-                moves.add(new ChessMove(myPosition, position, null));
-            } else {
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                }
-            }
-        }
-
-        return moves;
     }
 
 
-    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves) {
-        int row;
-        int col;
-        ChessPosition position;
-        // Diagonal moves to bottom left
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() - i;
-            col = myPosition.getColumn() - i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
+    public void knightMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
+        row = myPosition.getRow();
+        col = myPosition.getColumn();
+        int[][] spots = {{row+2, col-1}, {row+2, col+1},{row-1,col+2},{row+1, col+2},{row-2, col+1},{row-2,col-1},{row-1,col-2},{row+1,col-2}};
+        for (int i=0; i < spots.length; i++){
+            row = spots[i][0];
+            col = spots[i][1];
+            if (!isValid(row,col)){
+                continue;
             }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board,position)) {
+                if (isTeam(board, position)){
+                    continue;
                 }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        // Diagonal Moves to bottom right
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() - i;
-            col = myPosition.getColumn() + i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
+                else{
                     moves.add(new ChessMove(myPosition, position, null));
-                    break;
+                    continue;
                 }
-                break;
             }
-            moves.add(new ChessMove(myPosition, position, null));
+            moves.add(new ChessMove(myPosition,position, null));
         }
-
-        // Diagonal moves top left
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() + i;
-            col = myPosition.getColumn() - i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        // Diagonal moves top right
-        for (int i = 1; i <= 9; i++) {
-            row = myPosition.getRow() + i;
-            col = myPosition.getColumn() + i;
-            position = new ChessPosition(row, col);
-            if (!isValid(board, position)) {
-                break;
-            }
-            if (board.getPiece(position) != null){
-                if (!isTeam(board, position, myPosition)) {
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-                break;
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-        }
-
-        return moves;
     }
 
+    public void kingMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
+        row = myPosition.getRow();
+        col = myPosition.getColumn();
+        int[][] spots = {{row+1, col}, {row+1, col+1},{row,col+1},{row-1, col-1},{row-1, col},{row-1,col+1},{row,col-1},{row+1,col-1}};
+        for (int i=0; i < spots.length; i++){
+            row = spots[i][0];
+            col = spots[i][1];
+            if (!isValid(row,col)){
+                continue;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board,position)) {
+                if (isTeam(board, position)){
+                    continue;
+                }
+                else{
+                    moves.add(new ChessMove(myPosition, position, null));
+                    continue;
+                }
+            }
+            moves.add(new ChessMove(myPosition,position, null));
+        }
+    }
 
+    public void bishopMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
 
+        // Diagonal Upper Right;
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow() + i;
+            col = myPosition.getColumn() + i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else{
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+            }
+            moves.add(new ChessMove(myPosition, position, null));
+        }
+
+        // Diagonal Upper Left;
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow() + i;
+            col = myPosition.getColumn() - i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+            }
+            moves.add(new ChessMove(myPosition, position, null));
+        }
+
+        //Diagonal Lower Right;
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow() - i;
+            col = myPosition.getColumn() + i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+            }
+            moves.add(new ChessMove(myPosition, position, null));
+        }
+
+        //Diagonal Lower Left
+        for (int i=1; i<8; i++){
+            row = myPosition.getRow() - i;
+            col = myPosition.getColumn() - i;
+            if (!isValid(row,col)){
+                break;
+            }
+            ChessPosition position = new ChessPosition(row, col);
+            if (!isEmpty(board, position)){
+                if (isTeam(board, position)){
+                    break;
+                }
+                else {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                }
+            }
+            moves.add(new ChessMove(myPosition, position, null));
+
+        }
+    }
+
+    /**
+     * Calculates all the positions a chess piece can move to
+     * Does not take into account moves that are illegal due to leaving the king in
+     * danger
+     *
+     * @return Collection of valid move
+     */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 //        throw new RuntimeException("Not implemented");
         Collection<ChessMove> moves = new HashSet<>();
-
-        if (type == PieceType.BISHOP) {
+        if (type == PieceType.BISHOP){
             bishopMoves(board, myPosition, moves);
         }
-        if (type == PieceType.KNIGHT) {
+        if (type == PieceType.KING){
+            kingMoves(board, myPosition, moves);
+        }
+
+        if (type == PieceType.KNIGHT){
             knightMoves(board, myPosition, moves);
         }
-        if (type == PieceType.ROOK) {
-            rookMove(board, myPosition, moves);
+
+        if(type == PieceType.ROOK){
+            rookMoves(board, myPosition, moves);
         }
-        if (type == PieceType.PAWN) {
+
+        if (type == PieceType.QUEEN){
+            bishopMoves(board, myPosition, moves);
+            rookMoves(board, myPosition, moves);
+        }
+
+        if (type == PieceType.PAWN){
             pawnMoves(board, myPosition, moves);
-        }
-        if (type == PieceType.QUEEN) {
-            queenMove(board, myPosition, moves);
-        }
-        if (type == PieceType.KING) {
-            kingMoves(board, myPosition, moves);
         }
 
         return moves;
