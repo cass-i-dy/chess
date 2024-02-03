@@ -61,6 +61,22 @@ public class ChessGame {
 
     }
 
+    public void changeTeam(){
+        if (teamTurn == TeamColor.WHITE){
+            teamTurn = TeamColor.BLACK;
+        }
+        else {
+            teamTurn = TeamColor.WHITE;
+        }
+    }
+
+    public boolean isCurrTeam(ChessMove move){
+        if (curr_board.getPiece(move.startPosition).pieceColor == teamTurn){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -69,18 +85,14 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 //        throw new RuntimeException("Not implemented");
-        try {
-            if (validMoves(move.startPosition).contains(move)){
+            if (validMoves(move.startPosition).contains(move) && isCurrTeam(move)){
                 curr_board.addPiece(move.getEndPosition(), curr_board.getPiece(move.startPosition));
                 curr_board.addPiece(move.getStartPosition(), null);
+                changeTeam();
             }
             else {
-                throw new InvalidMoveException("move is invalid");
+                throw new InvalidMoveException();
             }
-        }
-        catch (InvalidMoveException e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     /**
