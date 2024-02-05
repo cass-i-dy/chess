@@ -12,7 +12,8 @@ public class ChessGame {
     TeamColor teamTurn;
     ChessBoard curr_board;
 
-    ChessPiece piece;
+    TeamColor check;
+
 
     public ChessGame() {
     }
@@ -42,6 +43,7 @@ public class ChessGame {
         WHITE,
         BLACK
     }
+
 
     /**
      * Gets a valid moves for a piece at the given location
@@ -77,6 +79,19 @@ public class ChessGame {
         return false;
     }
 
+    public ChessPosition findKing(TeamColor teamColor){
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = curr_board.getPiece(position);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    return position;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -85,7 +100,8 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 //        throw new RuntimeException("Not implemented");
-            if (validMoves(move.startPosition).contains(move) && isCurrTeam(move)){
+
+            if (validMoves(move.startPosition).contains(move) && isCurrTeam(move) && !isInCheck(curr_board.getPiece(move.startPosition).pieceColor)){
                 curr_board.addPiece(move.getEndPosition(), curr_board.getPiece(move.startPosition));
                 curr_board.addPiece(move.getStartPosition(), null);
                 changeTeam();
@@ -102,7 +118,30 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+//        throw new RuntimeException("Not implemented");
+//        is the team currently in check?
+//        include the position of the king
+//        check all the opposing team
+
+        ChessPosition king_position = findKing(teamColor);
+        for (int i = 1; i < 8; i++) {
+            for (int j = 1; j < 8; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = curr_board.getPiece(position);
+                ChessMove king_move = new ChessMove(position, king_position, null);
+                if (piece == null){
+                    continue;
+                }
+                if (piece.getTeamColor() == teamColor) {
+                    continue;
+                }
+                if (validMoves(position).contains(king_move)) {
+                    return true;
+
+                }
+            }
+        }
+        return false;
     }
 
     /**
