@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -64,9 +65,25 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessPiece possible_piece = null;
 //        throw new RuntimeException("Not implemented");
         if (curr_board.getPiece(startPosition) != null){
-            return curr_board.getPiece(startPosition).pieceMoves(curr_board, startPosition);
+            Collection<ChessMove> moves = curr_board.getPiece(startPosition).pieceMoves(curr_board, startPosition);
+            Collection<ChessMove> final_moves = new HashSet<>();
+            for (ChessMove move: moves){
+                if (curr_board.getPiece(move.getEndPosition()) != null){
+                    possible_piece = curr_board.getPiece(move.getEndPosition());
+                }
+                curr_board.addPiece(move.getEndPosition(), curr_board.getPiece(move.getStartPosition()));
+                curr_board.addPiece(move.getStartPosition(),null);
+                if (!isInCheck(curr_board.getPiece(move.getEndPosition()).getTeamColor())){
+                    final_moves.add(move);
+                }
+                curr_board.addPiece(move.getStartPosition(), curr_board.getPiece(move.getEndPosition()));
+                curr_board.addPiece(move.getEndPosition(),possible_piece);
+                possible_piece = null;
+            }
+            return final_moves;
         }
         else{
             return null;
@@ -115,6 +132,10 @@ public class ChessGame {
             if (validMoves(move.startPosition).contains(move) && isCurrTeam(move) && !isInCheck(curr_board.getPiece(move.startPosition).pieceColor)){
                 curr_board.addPiece(move.getEndPosition(), curr_board.getPiece(move.startPosition));
                 curr_board.addPiece(move.getStartPosition(), null);
+                if (isInCheck(curr_board.getPiece(move.startPosition).pieceColor)){
+                    curr_board.addPiece(move.getStartPosition(), curr_board.getPiece(move.endPosition));
+                    curr_board.addPiece(move.getEndPosition(), null);
+                }
                 changeTeam();
             }
             else {
@@ -135,8 +156,8 @@ public class ChessGame {
 //        check all the opposing team
 
         ChessPosition king_position = findKing(teamColor);
-        for (int i = 1; i < 8; i++) {
-            for (int j = 1; j < 8; j++) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 ChessPosition position = new ChessPosition(i, j);
                 ChessPiece piece = curr_board.getPiece(position);
                 ChessMove king_move = new ChessMove(position, king_position, null);
@@ -146,7 +167,7 @@ public class ChessGame {
                 if (piece.getTeamColor() == teamColor) {
                     continue;
                 }
-                if (validMoves(position).contains(king_move)) {
+                if (piece.pieceMoves(curr_board, position).contains(king_move)) {
                     return true;
 
                 }
@@ -165,7 +186,7 @@ public class ChessGame {
         boolean temp = false;
         int check = 0;
         ChessPosition king_position = findKing(teamColor);
-        Collection<ChessMove> king_moves = validMoves(king_position);
+        Collection<ChessMove> king_moves = curr_board.getPiece(king_position).pieceMoves(curr_board, king_position);
         for (ChessMove king_move: king_moves){
             curr_board.addPiece(king_move.getEndPosition(), curr_board.getPiece(king_position));
             for (int i = 1; i < 9; i++) {
@@ -176,10 +197,14 @@ public class ChessGame {
                     if (piece == null){
                         continue;
                     }
+                    if (piece.getTeamColor() == teamColor){
+                        continue;
+                    }
                     if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && (i == 1 || i == 7)){
                         possible_king_move = new ChessMove(position, king_move.endPosition, ChessPiece.PieceType.QUEEN);
                     }
-                    if (validMoves(position).contains(possible_king_move)){
+                    Collection<ChessMove> foo = piece.pieceMoves(curr_board, position);
+                    if (piece.pieceMoves(curr_board, position).contains(possible_king_move)){
                         check++;
                         temp = true;
                         break;
@@ -193,7 +218,7 @@ public class ChessGame {
             curr_board.addPiece(king_move.getEndPosition(), null);
 
         }
-    if (check == king_moves.size()) {
+    if (check == king_moves.size() && check != 0) {
         return true;
     }
     return false;
