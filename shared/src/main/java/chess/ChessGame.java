@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,8 +13,18 @@ public class ChessGame {
     TeamColor teamTurn;
     ChessBoard curr_board;
 
-    TeamColor check;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return teamTurn == chessGame.teamTurn && Objects.equals(curr_board, chessGame.curr_board);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamTurn, curr_board);
+    }
 
     public ChessGame() {
     }
@@ -151,7 +162,41 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+//        throw new RuntimeException("Not implemented");
+        int checkmate = 0;
+        ChessPosition king_position = findKing(teamColor);
+        Collection<ChessMove> king_moves = validMoves(king_position);
+        for (ChessMove king_move: king_moves){
+                curr_board.addPiece(king_move.getEndPosition(), curr_board.getPiece(king_position));
+            for (int i = 1; i < 8; i++) {
+                for (int j = 1; j < 8; j++) {
+                    ChessPosition position = new ChessPosition(i, j);
+                    ChessPiece piece = curr_board.getPiece(position);
+                    if (piece == null){
+                        continue;
+                    }
+                    if (validMoves(position).contains(king_move)) {
+                        checkmate += 1;
+                    }
+//                    else if (piece.getPieceType() == ChessPiece.PieceType.PAWN && piece.getTeamColor() != curr_board.getPiece(king_position).getTeamColor()){
+//                        ChessPosition pawn_position = new ChessPosition(position.getRow() + 1, position.getColumn() + 1);
+//                        if (king_position == pawn_position) {
+//                            checkmate = true;
+//                        }
+//                        pawn_position = new ChessPosition(position.getRow() - 1, position.getColumn() - 1);
+//                        if (king_position == pawn_position){
+//                            checkmate = true;
+//                        }
+//                    }
+
+                }
+            }
+            curr_board.addPiece(king_move.getEndPosition(), curr_board.getPiece(king_position));
+        }
+    if (checkmate == king_moves.size()) {
+        return true;
+    }
+    return false;
     }
 
     /**
