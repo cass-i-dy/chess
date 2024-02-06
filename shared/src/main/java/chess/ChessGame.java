@@ -132,7 +132,10 @@ public class ChessGame {
             if (validMoves(move.startPosition).contains(move) && isCurrTeam(move) && !isInCheck(curr_board.getPiece(move.startPosition).pieceColor)){
                 curr_board.addPiece(move.getEndPosition(), curr_board.getPiece(move.startPosition));
                 curr_board.addPiece(move.getStartPosition(), null);
-                if (isInCheck(curr_board.getPiece(move.startPosition).pieceColor)){
+                if (move.getPromotionPiece() != null){
+                     curr_board.addPiece(move.getEndPosition(), new ChessPiece(curr_board.getPiece(move.getEndPosition()).getTeamColor(), move.getPromotionPiece()));
+                }
+                if (isInCheck(curr_board.getPiece(move.getEndPosition()).pieceColor)){
                     curr_board.addPiece(move.getStartPosition(), curr_board.getPiece(move.endPosition));
                     curr_board.addPiece(move.getEndPosition(), null);
                 }
