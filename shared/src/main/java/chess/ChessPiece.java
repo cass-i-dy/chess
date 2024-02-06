@@ -227,7 +227,7 @@ public class ChessPiece {
     public void rookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
 
         // Up
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn();
             if (!isValid(row,col)){
@@ -248,7 +248,7 @@ public class ChessPiece {
         }
 
         // Down
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn();
             if (!isValid(row,col)){
@@ -269,7 +269,7 @@ public class ChessPiece {
         }
 
         // Right
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow();
             col = myPosition.getColumn() + i;
             if (!isValid(row,col)){
@@ -290,7 +290,7 @@ public class ChessPiece {
         }
 
         // Left
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow();
             col = myPosition.getColumn() - i;
             if (!isValid(row,col)){
@@ -363,7 +363,7 @@ public class ChessPiece {
     public void bishopMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
 
         // Diagonal Upper Right;
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn() + i;
             if (!isValid(row,col)){
@@ -383,7 +383,7 @@ public class ChessPiece {
         }
 
         // Diagonal Upper Left;
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn() - i;
             if (!isValid(row,col)){
@@ -403,7 +403,7 @@ public class ChessPiece {
         }
 
         //Diagonal Lower Right;
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() + i;
             if (!isValid(row,col)){
@@ -423,7 +423,7 @@ public class ChessPiece {
         }
 
         //Diagonal Lower Left
-        for (int i=1; i<8; i++){
+        for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() - i;
             if (!isValid(row,col)){

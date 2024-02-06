@@ -162,13 +162,14 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        boolean temp = false;
         int check = 0;
         ChessPosition king_position = findKing(teamColor);
         Collection<ChessMove> king_moves = validMoves(king_position);
         for (ChessMove king_move: king_moves){
             curr_board.addPiece(king_move.getEndPosition(), curr_board.getPiece(king_position));
-            for (int i = 1; i < 8; i++) {
-                for (int j = 1; j < 8; j++) {
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
                     ChessPosition position = new ChessPosition(i, j);
                     ChessMove possible_king_move = new ChessMove(position, king_move.endPosition, null);
                     ChessPiece piece = curr_board.getPiece(position);
@@ -178,10 +179,15 @@ public class ChessGame {
                     if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && (i == 1 || i == 7)){
                         possible_king_move = new ChessMove(position, king_move.endPosition, ChessPiece.PieceType.QUEEN);
                     }
-                    Collection<ChessMove> temp = validMoves(position);
                     if (validMoves(position).contains(possible_king_move)){
                         check++;
+                        temp = true;
+                        break;
                     }
+                }
+                if (temp) {
+                    temp = false;
+                    break;
                 }
             }
             curr_board.addPiece(king_move.getEndPosition(), null);
@@ -201,7 +207,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+//        throw new RuntimeException("Not implemented");
+        if (teamColor == TeamColor.WHITE){
+            return isInCheckmate(TeamColor.WHITE);
+        }
+        return isInCheckmate(TeamColor.BLACK);
     }
 
     /**
