@@ -175,6 +175,9 @@ public class ChessGame {
                     if (piece == null){
                         continue;
                     }
+                    if ((piece.getPieceType() == ChessPiece.PieceType.PAWN) && (i == 1 || i == 7)){
+                        possible_king_move = new ChessMove(position, king_move.endPosition, ChessPiece.PieceType.QUEEN);
+                    }
                     Collection<ChessMove> temp = validMoves(position);
                     if (validMoves(position).contains(possible_king_move)){
                         check++;
