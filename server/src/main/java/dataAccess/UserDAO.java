@@ -1,4 +1,5 @@
 package dataAccess;
+import model.AuthToken;
 import model.User;
 
 import java.util.Objects;
@@ -21,5 +22,16 @@ public class UserDAO implements DataAccess {
     public void addUser(String userName, String password, String email){
         User user = new User(userName, password, email);
         userList.add(user);
+    }
+
+    public AuthToken createAuthToken(String userName){
+        return new AuthToken(userName);
+    }
+
+    public void checkUser(String userName, String password){
+        User user = getUser(userName);
+        if(Objects.equals(user.getPassword(), password)){
+            return;
+        }
     }
 }
