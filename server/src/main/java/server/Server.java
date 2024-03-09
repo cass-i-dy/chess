@@ -1,5 +1,6 @@
 package server;
 
+import Requests.*;
 import dataAccess.*;
 import model.AuthToken;
 import spark.*;
@@ -8,14 +9,15 @@ import service.UserService;
 
 import com.google.gson.Gson;
 
-import javax.xml.crypto.Data;
 import java.util.Map;
 
 
 public class Server {
-    DataAccess user = new UserDAO();
+    DataAccessUser user = new UserDAO();
 
-    UserService userService = new UserService(user);
+    DataAccessAuth auth = new AuthTokenDAO();
+    UserService userService = new UserService(user, auth);
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -93,8 +95,25 @@ public class Server {
     }
 
     public Object LogoutHandler(Request req, Response res) throws DataAccessException {
+        try {
+            String authToken = req.headers("Authorization");
+            LogoutRequest request = new LogoutRequest(authToken);
+            userService.removeLogout(request);
+            res.status(200);
+            return "{}";
+        }
+        catch (DataAccessException e){
+            var message = e.getMessage();
+            if (message == "Error: unauthorized") {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+            else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
 
-        return null;
+            }
+        }
     }
 
     public void JoinGame(){

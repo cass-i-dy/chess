@@ -1,17 +1,20 @@
 package service;
-import dataAccess.DataAccess;
+import dataAccess.DataAccessAuth;
+import dataAccess.DataAccessUser;
 import dataAccess.DataAccessException;
-import server.RegisterRequest;
 import model.*;
-import server.LoginRequest;
+
+import Requests.*;
 
 public class UserService {
-    DataAccess dataAccess;
+    DataAccessUser dataAccess;
+
+    DataAccessAuth authAccess;
 
 
-
-    public UserService(DataAccess dataAccess) {
+    public UserService(DataAccessUser dataAccess, DataAccessAuth authAccess) {
         this.dataAccess = dataAccess;
+        this.authAccess = authAccess;
     }
 
     public AuthToken createUser(RegisterRequest request) throws DataAccessException {
@@ -25,7 +28,9 @@ public class UserService {
             throw new DataAccessException("Error: already taken");
         }
         dataAccess.addUser(username, password, email);
-        return dataAccess.createAuthToken(username);
+        AuthToken authToken = dataAccess.createAuthToken(username);
+        authAccess.addAuthToken(authToken);
+        return authToken;
     }
 
     public AuthToken findLogin(LoginRequest request) throws DataAccessException {
@@ -35,11 +40,25 @@ public class UserService {
         if (user.getName() == null){
             throw new DataAccessException("Error: unauthorized");
         }
-        if(user.getPassword() != password) {
+        if(!user.getPassword().equals(password)) {
             throw new DataAccessException("Error: unauthorized");
         }
-        return dataAccess.createAuthToken(username);
+        AuthToken authToken =  dataAccess.createAuthToken(username);
+        authAccess.addAuthToken(authToken);
+        return authToken;
 
+    }
+
+    public void removeLogout(LogoutRequest request) throws DataAccessException {
+        if (request == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        String authTokenString = request.getAuthToken();
+        AuthToken authToken = authAccess.findAuthToken(authTokenString);
+        if (authToken == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        authAccess.removeAuthToken(authToken);
     }
 
 }

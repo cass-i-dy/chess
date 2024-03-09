@@ -4,10 +4,19 @@ import java.util.UUID;
 
 public class AuthToken {
 
-    String token;
+    String authToken;
     String username;
     public AuthToken(String username){
         this.username = username;
-        this.token = UUID.randomUUID().toString();
+        this.authToken = UUID.randomUUID().toString();
     }
+
+    public String getName(){
+        return username;
+    }
+
+    public String getToken(){
+        return authToken;
+    }
+
 }
