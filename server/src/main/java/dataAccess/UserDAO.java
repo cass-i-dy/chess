@@ -28,10 +28,4 @@ public class UserDAO implements DataAccess {
         return new AuthToken(userName);
     }
 
-    public void checkUser(String userName, String password){
-        User user = getUser(userName);
-        if(Objects.equals(user.getPassword(), password)){
-            return;
-        }
-    }
 }

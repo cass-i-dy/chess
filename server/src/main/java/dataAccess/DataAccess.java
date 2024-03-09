@@ -10,6 +10,5 @@ public interface DataAccess {
 
     AuthToken createAuthToken(String userName) throws DataAccessException;
 
-    void checkUser(String userName, String password);
 }
 

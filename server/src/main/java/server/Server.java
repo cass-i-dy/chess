@@ -1,12 +1,15 @@
 package server;
 
 import dataAccess.*;
-import passoffTests.testClasses.TestModels;
+import model.AuthToken;
 import spark.*;
 
 import service.UserService;
 
 import com.google.gson.Gson;
+
+import javax.xml.crypto.Data;
+import java.util.Map;
 
 
 public class Server {
@@ -25,7 +28,7 @@ public class Server {
 
 
 //        Spark.delete("/db", this::ClearApplication);
-//        Spark.delete("/session", this::ClearLogout);
+        Spark.delete("/session", this::LogoutHandler);
 
 
 
@@ -44,18 +47,56 @@ public class Server {
 
     // Get new Login Info from client
     public Object RegisterHandler(Request req, Response res) throws DataAccessException {
-            RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class );
-            userService.createUser(request);
-            return new Gson().toJson(res);
+        try {
+            RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
+            AuthToken authToken = userService.createUser(request);
+            res.status(200);
+            return new Gson().toJson(authToken);
+        }
+        catch (DataAccessException e) {
+            var message = e.getMessage();
+            if (message == "Error: bad request") {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            } else if (message == "Error: already taken") {
+                res.status(403);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
 
-//        return null;
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+        }
+
     }
 
     public Object LoginHandler(Request req, Response res) throws DataAccessException {
-        LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
-        userService.findLogin(request);
-        return new Gson().toJson(res);
+        try {
+            LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
+            AuthToken authToken = userService.findLogin(request);
+            res.status(200);
+            return new Gson().toJson(authToken);
+        }
+        catch (DataAccessException e){
+            var message = e.getMessage();
+            if (message == "Error: unauthorized"){
+                res.status(401);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+
+            }
+            else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+
+            }
+        }
     }
+
+    public Object LogoutHandler(Request req, Response res) throws DataAccessException {
+
+        return null;
+    }
+
     public void JoinGame(){
 
     }
@@ -64,9 +105,6 @@ public class Server {
         return null;
     }
 
-    public Object ClearLogout(){
-        return null;
-    }
 
     public Object ListGamesHandler(){
         return null;
