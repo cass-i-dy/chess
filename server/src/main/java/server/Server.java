@@ -4,6 +4,7 @@ import Requests.*;
 import dataAccess.*;
 import model.AuthToken;
 
+import model.Game;
 import spark.*;
 
 import service.*;
@@ -11,14 +12,13 @@ import service.*;
 import com.google.gson.Gson;
 
 import javax.xml.crypto.Data;
+import java.util.ArrayList;
 import java.util.Map;
 
 
 public class Server {
     DataAccessUser user = new UserDAO();
-
     DataAccessAuth auth = new AuthTokenDAO();
-
     DataAccessGame game = new GameDAO();
     UserService userService = new UserService(user, auth);
     GameService gameService = new GameService(game, auth);
@@ -35,9 +35,8 @@ public class Server {
         Spark.post("/session", this::LoginHandler);
         Spark.post(("/game"), this::CreateGameHandler);
         Spark.put(("/game"), this::JoinGameHandler);
-
-
-//        Spark.delete("/db", this::ClearApplication);
+        Spark.get(("/game"), this::ListGamesHandler);
+        Spark.delete("/db", this::ClearApplication);
         Spark.delete("/session", this::LogoutHandler);
 
 
@@ -52,10 +51,6 @@ public class Server {
     }
 
 
-
-
-
-    // Get new Login Info from client
     public Object RegisterHandler(Request req, Response res) throws DataAccessException {
         try {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
@@ -179,14 +174,13 @@ public class Server {
         }
     }
 
-    public Object ListGamesHandler(){
+    public Object ListGamesHandler(Request req, Response res) throws DataAccessException{
         try {
             String authToken = req.headers("Authorization");
-            JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
-            request.addAuthToken(authToken);
-            gameService.joinGame(request);
+            ListGamesRequest request = new ListGamesRequest(authToken);
+            ArrayList<Game> games = gameService.listGames(request);
             res.status(200);
-            return "{}";
+            return "{ \"games\":" + new Gson().toJson(games) +"}";
         }
         catch (DataAccessException e) {
             var message = e.getMessage();
@@ -194,19 +188,11 @@ public class Server {
                 res.status(401);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
             }
-            if (message.equals("Error: bad request")) {
-                res.status(400);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-            }
-            if (message.equals("Error: already taken")) {
-                res.status(403);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-            } else {
+            else {
                 res.status(500);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
             }
         }
-        return null;
     }
     public Object ClearApplication(){
         return null;

@@ -2,6 +2,7 @@ package service;
 
 import Requests.CreateGameRequest;
 import Requests.JoinGameRequest;
+import Requests.ListGamesRequest;
 import dataAccess.DataAccessAuth;
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessGame;
@@ -9,6 +10,7 @@ import model.AuthToken;
 import model.Game;
 
 import javax.xml.crypto.Data;
+import java.util.ArrayList;
 
 public class GameService {
     DataAccessGame dataAccess;
@@ -55,5 +57,14 @@ public class GameService {
         if (!dataAccess.setGame(game, playerColor, userName)){
             throw new DataAccessException("Error: already taken");
         }
+    }
+
+    public ArrayList<Game> listGames(ListGamesRequest request) throws DataAccessException{
+        String authTokenString = request.getAuthToken();
+        AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
+        if (authToken == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        return dataAccess.getList();
     }
 }

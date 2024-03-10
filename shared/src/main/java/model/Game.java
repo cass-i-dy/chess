@@ -4,9 +4,9 @@ public class Game {
     String gameName;
     String gameID;
 
-    String whiteUserName;
+    String whiteUserName = "";
 
-    String blackUserName;
+    String blackUserName = "";
 
     public Game(String gameName, String gameID){
         this.gameName = gameName;

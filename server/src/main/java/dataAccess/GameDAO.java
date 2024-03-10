@@ -56,4 +56,8 @@ public class GameDAO implements DataAccessGame{
             return false;
         }
     }
+
+    public ArrayList<Game> getList(){
+        return games;
+    }
 }
