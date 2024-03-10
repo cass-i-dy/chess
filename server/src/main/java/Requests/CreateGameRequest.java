@@ -1,9 +1,24 @@
 package Requests;
 
+import model.AuthToken;
+
 public class CreateGameRequest {
+    String authToken;
     String gameName;
 
     public String getGameName(){
         return gameName;
+    }
+    public String getAuthToken(){
+        return authToken;
+    }
+
+    public CreateGameRequest(String authToken, String gameName){
+        this.authToken = authToken;
+        this.gameName = gameName;
+    }
+
+    public void addAuthToken(String auth) {
+        authToken = auth;
     }
 }

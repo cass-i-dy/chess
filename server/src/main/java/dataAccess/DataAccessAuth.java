@@ -3,9 +3,9 @@ package dataAccess;
 import model.AuthToken;
 
 public interface DataAccessAuth {
-    public void addAuthToken(AuthToken authToken);
+    void addAuthToken(AuthToken authToken);
 
     AuthToken findAuthToken(String authTokenString);
 
-    public void removeAuthToken(AuthToken authToken);
+    void removeAuthToken(AuthToken authToken);
 }
