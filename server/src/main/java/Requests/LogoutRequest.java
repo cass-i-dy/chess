@@ -8,9 +8,7 @@ public class LogoutRequest {
     public String getAuthToken() {
         return authToken;
     }
-
     public LogoutRequest(String authToken) {
         this.authToken = authToken;
-
     }
 }

@@ -37,7 +37,7 @@ public class UserService {
         String username = request.getUsername();
         String password = request.getPassword();
         User user = dataAccess.getUser(username);
-        if (user.getName() == null){
+        if (user == null){
             throw new DataAccessException("Error: unauthorized");
         }
         if(!user.getPassword().equals(password)) {
