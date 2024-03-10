@@ -82,7 +82,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Login Success")
+    @DisplayName("Login Failed")
     void testLoginFail() {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUserName(testUser.getName());
@@ -92,7 +92,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Login Success")
+    @DisplayName("Login Failed")
     void testLoginEmptyFail() {
         RegisterRequest request = new RegisterRequest();
         request.setUserName(testUser.getName());
@@ -124,7 +124,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Logout Success")
+    @DisplayName("Logout Failed")
     void testLogoutFail() {
         RegisterRequest request = new RegisterRequest();
         request.setUserName(testUser.getName());
