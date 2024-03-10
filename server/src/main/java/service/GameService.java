@@ -1,15 +1,14 @@
 package service;
 
-import Requests.CreateGameRequest;
-import Requests.JoinGameRequest;
-import Requests.ListGamesRequest;
+import requests.CreateGameRequest;
+import requests.JoinGameRequest;
+import requests.ListGamesRequest;
 import dataAccess.DataAccessAuth;
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessGame;
 import model.AuthToken;
 import model.Game;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class GameService {

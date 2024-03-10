@@ -1,5 +1,5 @@
 package serviceTests;
-import Requests.*;
+import requests.*;
 import org.junit.jupiter.api.*;
 import service.*;
 import dataAccess.*;
@@ -56,9 +56,31 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Register Failed")
-    void testRegisterEmptyFail(){
+    void testRegisterEmptyPasswordFail(){
         RegisterRequest request = new RegisterRequest();
         request.setUserName(testUser.getName());
+        request.setEmail(testUser.getEmail());
+
+        Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
+
+    }
+
+    @Test
+    @DisplayName("Register Failed")
+    void testRegisterEmptyEmailFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName(testUser.getName());
+        request.setUserPassword(testUser.getPassword());
+
+        Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
+
+    }
+
+    @Test
+    @DisplayName("Register Failed")
+    void testRegisterEmptyUserNameFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));

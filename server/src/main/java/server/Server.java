@@ -1,6 +1,6 @@
 package server;
 
-import Requests.*;
+import requests.*;
 import dataAccess.*;
 import model.AuthToken;
 

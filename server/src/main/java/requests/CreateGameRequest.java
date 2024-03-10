@@ -1,6 +1,4 @@
-package Requests;
-
-import model.AuthToken;
+package requests;
 
 public class CreateGameRequest {
     String authToken;

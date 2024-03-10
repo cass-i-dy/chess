@@ -1,10 +1,12 @@
 package serviceTests;
-import Requests.*;
+import requests.*;
 import org.junit.jupiter.api.*;
 import service.*;
 import dataAccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
+
+import javax.xml.crypto.Data;
 
 
 public class GameServiceTest {
@@ -40,6 +42,7 @@ public class GameServiceTest {
         Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
     }
 
+
     @Test
     @DisplayName("CreateGame Fail")
     void testCreateGameFail(){
@@ -50,9 +53,24 @@ public class GameServiceTest {
 
         AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
 
-        CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
+        CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), null);
 
-        Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest));
+    }
+
+    @Test
+    @DisplayName("CreateGame Fail")
+    void testCreateGameAuthFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName(testUser.getName());
+        request.setUserPassword(testUser.getPassword());
+        request.setEmail(testUser.getEmail());
+
+        Assertions.assertDoesNotThrow(()->userService.createUser(request));
+
+        CreateGameRequest gameRequest = new CreateGameRequest("", "Exploding Chess");
+
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest));
     }
 
     @Test
@@ -102,6 +120,70 @@ public class GameServiceTest {
     }
 
     @Test
+    @DisplayName("JoinGame Fail")
+    void testJoinGamePlayerFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName(testUser.getName());
+        request.setUserPassword(testUser.getPassword());
+        request.setEmail(testUser.getEmail());
+
+        AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
+
+        CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
+
+        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest(null, gameID);
+        joinGameBlackRequest.addAuthToken(authToken.getToken());
+
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
+
+    }
+
+    @Test
+    @DisplayName("JoinGame Fail")
+    void testJoinAuthFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName(testUser.getName());
+        request.setUserPassword(testUser.getPassword());
+        request.setEmail(testUser.getEmail());
+
+        AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
+
+        CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
+
+        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        joinGameBlackRequest.addAuthToken("");
+
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
+
+    }
+
+    @Test
+    @DisplayName("JoinGame Fail")
+    void testJoinGameWhileFail(){
+        RegisterRequest request = new RegisterRequest();
+        request.setUserName(testUser.getName());
+        request.setUserPassword(testUser.getPassword());
+        request.setEmail(testUser.getEmail());
+
+        AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
+
+        CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
+
+        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
+        joinGameWhiteRequest.addAuthToken(authToken.getToken());
+
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameWhiteRequest));
+
+    }
+
+    @Test
     @DisplayName("ListGame Success")
     void testListGamePass(){
         RegisterRequest request = new RegisterRequest();
@@ -131,7 +213,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("ListGame Fail")
-    void testListGameFail(){
+    void testListGameAuthFail(){
         RegisterRequest request = new RegisterRequest();
         request.setUserName(testUser.getName());
         request.setUserPassword(testUser.getPassword());

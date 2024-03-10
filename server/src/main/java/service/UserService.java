@@ -4,7 +4,7 @@ import dataAccess.DataAccessUser;
 import dataAccess.DataAccessException;
 import model.*;
 
-import Requests.*;
+import requests.*;
 
 public class UserService {
     DataAccessUser dataAccess;
