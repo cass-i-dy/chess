@@ -60,4 +60,8 @@ public class GameDAO implements DataAccessGame{
     public ArrayList<Game> getList(){
         return games;
     }
+
+    public void clearAllGames(){
+        games.clear();
+    }
 }

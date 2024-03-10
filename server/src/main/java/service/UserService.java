@@ -61,4 +61,8 @@ public class UserService {
         authAccess.removeAuthToken(authToken);
     }
 
+    public void clearUser() throws DataAccessException {
+        dataAccess.clearAllUsers();
+    }
+
 }

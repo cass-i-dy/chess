@@ -24,5 +24,11 @@ public class AuthTokenDAO implements DataAccessAuth {
     public void removeAuthToken(AuthToken authToken){
         authTokens.remove(authToken);
     }
+
+    public void clearAllAuth() {
+        authTokens.clear();;
     }
+    }
+
+
 

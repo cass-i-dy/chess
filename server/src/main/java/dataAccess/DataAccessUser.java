@@ -2,6 +2,8 @@ package dataAccess;
 
 import model.*;
 
+import javax.xml.crypto.Data;
+
 public interface DataAccessUser {
     void addUser(String userName, String password, String email ) throws DataAccessException;
 
@@ -9,7 +11,8 @@ public interface DataAccessUser {
 
     AuthToken createAuthToken(String userName) throws DataAccessException;
 
-    public void removeUser(User user) throws DataAccessException;
+
+    public void clearAllUsers() throws DataAccessException;
 
 }
 

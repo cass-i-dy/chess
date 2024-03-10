@@ -23,6 +23,7 @@ public class Server {
     UserService userService = new UserService(user, auth);
     GameService gameService = new GameService(game, auth);
 
+    ClearService clearService = new ClearService(user, auth, game);
 
 
     public int run(int desiredPort) {
@@ -36,7 +37,7 @@ public class Server {
         Spark.post(("/game"), this::CreateGameHandler);
         Spark.put(("/game"), this::JoinGameHandler);
         Spark.get(("/game"), this::ListGamesHandler);
-        Spark.delete("/db", this::ClearApplication);
+        Spark.delete("/db", this::ClearApplicationHandler);
         Spark.delete("/session", this::LogoutHandler);
 
 
@@ -194,7 +195,15 @@ public class Server {
             }
         }
     }
-    public Object ClearApplication(){
-        return null;
+    public Object ClearApplicationHandler(Request req, Response res) throws DataAccessException {
+        try {
+            clearService.clearEverything();
+            res.status(200);
+            return "{}";
+        }
+        catch (DataAccessException e) {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+        }
     }
 }
