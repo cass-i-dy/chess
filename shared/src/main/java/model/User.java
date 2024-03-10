@@ -10,7 +10,6 @@ public class User {
         this.password = password;
         this.email = email;
     }
-
     public String getName() {
         return userName;
     }
