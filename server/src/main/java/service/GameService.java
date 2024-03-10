@@ -1,10 +1,12 @@
 package service;
 
 import Requests.CreateGameRequest;
+import Requests.JoinGameRequest;
 import dataAccess.DataAccessAuth;
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessGame;
 import model.AuthToken;
+import model.Game;
 
 import javax.xml.crypto.Data;
 
@@ -32,5 +34,26 @@ public class GameService {
         }
         dataAccess.addGame(gameName);
         return dataAccess.getGameID(gameName);
+    }
+
+    public void joinGame(JoinGameRequest request) throws DataAccessException {
+        String gameID = request.getGameID();
+        String playerColor = request.getPlayerColor();
+        String authTokenString = request.getAuthToken();
+        AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
+        if (authToken == null){
+            throw new DataAccessException("Error: unauthorized");
+        }
+        if (gameID == null || playerColor == null){
+            throw new DataAccessException("Error: bad request");
+        }
+        Game game = dataAccess.getGame(gameID);
+        if (game == null){
+            throw new DataAccessException("Error: bad request");
+        }
+        String userName = authToken.getName();
+        if (!dataAccess.setGame(game, playerColor, userName)){
+            throw new DataAccessException("Error: already taken");
+        }
     }
 }

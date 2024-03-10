@@ -21,4 +21,17 @@ public class Game {
     public String getGameID(){
         return gameID;
     }
+
+    public String getWhite(){
+        return whiteUserName;
+    }
+    public String getBlack(){
+        return blackUserName;
+    }
+    public void setWhite(String playerWhite){
+        whiteUserName = playerWhite;
+    }
+    public void setBlack(String playerBlack){
+        blackUserName = playerBlack;
+    }
 }

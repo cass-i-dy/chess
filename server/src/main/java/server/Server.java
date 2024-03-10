@@ -10,6 +10,7 @@ import service.*;
 
 import com.google.gson.Gson;
 
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 
@@ -64,10 +65,10 @@ public class Server {
         }
         catch (DataAccessException e) {
             var message = e.getMessage();
-            if (message == "Error: bad request") {
+            if (message.equals("Error: bad request")) {
                 res.status(400);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
-            } else if (message == "Error: already taken") {
+            } else if (message.equals("Error: already taken")) {
                 res.status(403);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
 
@@ -149,17 +150,65 @@ public class Server {
         }
     }
 
-    public Object JoinGameHandler(Request req, Response res){
-        String authToken = req.headers("Authorization");
-        CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
+    public Object JoinGameHandler(Request req, Response res) throws DataAccessException {
+        try {
+            String authToken = req.headers("Authorization");
+            JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
+            request.addAuthToken(authToken);
+            gameService.joinGame(request);
+            res.status(200);
+            return "{}";
+        }
+        catch (DataAccessException e) {
+            var message = e.getMessage();
+            if (message.equals("Error: unauthorized")) {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+            if (message.equals("Error: bad request")) {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+            if (message.equals("Error: already taken")) {
+                res.status(403);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+        }
     }
-
-    public Object ClearApplication(){
-        return null;
-    }
-
 
     public Object ListGamesHandler(){
+        try {
+            String authToken = req.headers("Authorization");
+            JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
+            request.addAuthToken(authToken);
+            gameService.joinGame(request);
+            res.status(200);
+            return "{}";
+        }
+        catch (DataAccessException e) {
+            var message = e.getMessage();
+            if (message.equals("Error: unauthorized")) {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+            if (message.equals("Error: bad request")) {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+            if (message.equals("Error: already taken")) {
+                res.status(403);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", e.getMessage()));
+            }
+        }
+        return null;
+    }
+    public Object ClearApplication(){
         return null;
     }
 }
