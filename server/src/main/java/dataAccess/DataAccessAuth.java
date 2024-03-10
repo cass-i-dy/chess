@@ -1,5 +1,4 @@
 package dataAccess;
-
 import model.AuthToken;
 
 public interface DataAccessAuth {

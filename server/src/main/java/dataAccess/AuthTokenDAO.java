@@ -1,7 +1,5 @@
 package dataAccess;
 import model.AuthToken;
-import model.User;
-
 import java.util.ArrayList;
 
 public class AuthTokenDAO implements DataAccessAuth {
@@ -28,7 +26,7 @@ public class AuthTokenDAO implements DataAccessAuth {
     public void clearAllAuth() {
         authTokens.clear();;
     }
-    }
+}
 
 
 

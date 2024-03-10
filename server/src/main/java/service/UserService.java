@@ -3,12 +3,10 @@ import dataAccess.DataAccessAuth;
 import dataAccess.DataAccessUser;
 import dataAccess.DataAccessException;
 import model.*;
-
 import requests.*;
 
 public class UserService {
     DataAccessUser dataAccess;
-
     DataAccessAuth authAccess;
 
 
@@ -60,9 +58,4 @@ public class UserService {
         }
         authAccess.removeAuthToken(authToken);
     }
-
-    public void clearUser() throws DataAccessException {
-        dataAccess.clearAllUsers();
-    }
-
 }

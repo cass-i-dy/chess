@@ -7,13 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import requests.CreateGameRequest;
-import requests.JoinGameRequest;
-import requests.ListGamesRequest;
-import requests.RegisterRequest;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import requests.*;
+import service.*;
 
 public class ClearServiceTest {
     DataAccessUser userAccess = new UserDAO();

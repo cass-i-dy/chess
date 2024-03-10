@@ -12,9 +12,6 @@ public class UserServiceTest {
     DataAccessAuth authAccess = new AuthTokenDAO();
     DataAccessGame gameAccess = new GameDAO();
     UserService userService = new UserService(userAccess, authAccess);
-    GameService gameService = new GameService(gameAccess, authAccess);
-
-    ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
 
     User testUser = new User("Splash", "1234", "sparklytomato@gmail.com");
 
@@ -33,7 +30,7 @@ public class UserServiceTest {
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
-        AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
+        Assertions.assertDoesNotThrow(()->userService.createUser(request));
 
         Assertions.assertEquals(testUser.getName(), (Assertions.assertDoesNotThrow(()->userAccess.getUser(testUser.getName()))).getName());
         Assertions.assertEquals(testUser.getPassword(), (Assertions.assertDoesNotThrow(()->userAccess.getUser(testUser.getName()))).getPassword());
@@ -48,10 +45,9 @@ public class UserServiceTest {
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
-        AuthToken authToken = Assertions.assertDoesNotThrow(()->userService.createUser(request));
+        Assertions.assertDoesNotThrow(()->userService.createUser(request));
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
-
     }
 
     @Test
@@ -62,7 +58,6 @@ public class UserServiceTest {
         request.setEmail(testUser.getEmail());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
-
     }
 
     @Test
@@ -73,7 +68,6 @@ public class UserServiceTest {
         request.setUserPassword(testUser.getPassword());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
-
     }
 
     @Test
@@ -84,7 +78,6 @@ public class UserServiceTest {
         request.setEmail(testUser.getEmail());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
-
     }
 
     @Test
@@ -98,7 +91,7 @@ public class UserServiceTest {
         loginRequest.setUserName(testUser.getName());
         loginRequest.setPassword(testUser.getPassword());
 
-        AuthToken authToken = Assertions.assertDoesNotThrow(() -> userService.createUser(request));
+        Assertions.assertDoesNotThrow(() -> userService.createUser(request));
 
         Assertions.assertDoesNotThrow(() -> userService.findLogin(loginRequest));
     }
@@ -124,7 +117,7 @@ public class UserServiceTest {
         loginRequest.setUserName(testUser.getName());
         loginRequest.setPassword("ooooo");
 
-        AuthToken authToken = Assertions.assertDoesNotThrow(() -> userService.createUser(request));
+        Assertions.assertDoesNotThrow(() -> userService.createUser(request));
 
         Assertions.assertThrows(DataAccessException.class, () -> userService.findLogin(loginRequest));
     }
@@ -142,7 +135,6 @@ public class UserServiceTest {
         LogoutRequest logoutRequest = new LogoutRequest(authToken.getToken());
 
         Assertions.assertDoesNotThrow(() -> userService.removeLogout(logoutRequest));
-
     }
 
     @Test
@@ -156,10 +148,5 @@ public class UserServiceTest {
         LogoutRequest logoutRequest = new LogoutRequest("");
 
         Assertions.assertThrows(DataAccessException.class, () -> userService.removeLogout(logoutRequest));
-
-
     }
-
-
-
 }

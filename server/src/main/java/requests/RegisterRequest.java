@@ -14,7 +14,6 @@ public class RegisterRequest {
     public String getEmail(){
         return email;
     }
-
     public void setUserName(String username){
         this.username = username;
     }

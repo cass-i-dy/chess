@@ -9,6 +9,5 @@ public class ListGamesRequest {
 
     public ListGamesRequest(String authToken) {
         this.authToken = authToken;
-
     }
 }

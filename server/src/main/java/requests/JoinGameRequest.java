@@ -3,7 +3,6 @@ package requests;
 public class JoinGameRequest {
     String playerColor;
     String gameID;
-
     String authToken;
 
     public JoinGameRequest(String playerColor, String gameID){

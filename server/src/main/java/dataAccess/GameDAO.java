@@ -1,9 +1,7 @@
 package dataAccess;
 
 import java.util.ArrayList;
-
 import model.Game;
-import model.User;
 
 public class GameDAO implements DataAccessGame{
     ArrayList<Game> games =  new ArrayList<>();

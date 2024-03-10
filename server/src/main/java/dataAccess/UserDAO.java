@@ -1,14 +1,11 @@
 package dataAccess;
 import model.AuthToken;
 import model.User;
-
-import java.util.Objects;
 import java.util.ArrayList;
 
 public class UserDAO implements DataAccessUser {
 
     ArrayList<User> userList = new ArrayList<>();
-
 
     public User getUser(String userName){
         for (User user:userList) {
@@ -27,7 +24,6 @@ public class UserDAO implements DataAccessUser {
     public AuthToken createAuthToken(String userName){
         return new AuthToken(userName);
     }
-
 
     public void clearAllUsers(){
         userList.clear();

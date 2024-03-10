@@ -6,8 +6,6 @@ import dataAccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.xml.crypto.Data;
-
 
 public class GameServiceTest {
     DataAccessUser userAccess = new UserDAO();
@@ -15,9 +13,6 @@ public class GameServiceTest {
     DataAccessGame gameAccess = new GameDAO();
     UserService userService = new UserService(userAccess, authAccess);
     GameService gameService = new GameService(gameAccess, authAccess);
-
-    ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
-
     User testUser = new User("Splash", "1234", "sparklytomato@gmail.com");
 
     @BeforeEach
@@ -41,7 +36,6 @@ public class GameServiceTest {
 
         Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
     }
-
 
     @Test
     @DisplayName("CreateGame Fail")
@@ -94,7 +88,6 @@ public class GameServiceTest {
 
         Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
         Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
-
     }
 
     @Test
@@ -116,7 +109,6 @@ public class GameServiceTest {
 
         Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
         Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
-
     }
 
     @Test
@@ -137,7 +129,6 @@ public class GameServiceTest {
         joinGameBlackRequest.addAuthToken(authToken.getToken());
 
         Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
-
     }
 
     @Test
@@ -180,7 +171,6 @@ public class GameServiceTest {
 
         Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
         Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameWhiteRequest));
-
     }
 
     @Test
@@ -208,9 +198,7 @@ public class GameServiceTest {
         ListGamesRequest gamesRequest = new ListGamesRequest(authToken.getToken());
 
         Assertions.assertDoesNotThrow(()-> gameService.listGames(gamesRequest));
-
     }
-
     @Test
     @DisplayName("ListGame Fail")
     void testListGameAuthFail(){
@@ -236,7 +224,6 @@ public class GameServiceTest {
         ListGamesRequest gamesRequest = new ListGamesRequest("");
 
         Assertions.assertThrows(DataAccessException.class, ()-> gameService.listGames(gamesRequest));
-
     }
 
 

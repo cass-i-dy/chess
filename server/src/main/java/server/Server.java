@@ -1,17 +1,11 @@
 package server;
-
 import requests.*;
 import dataAccess.*;
 import model.AuthToken;
-
 import model.Game;
 import spark.*;
-
 import service.*;
-
 import com.google.gson.Gson;
-
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -22,16 +16,12 @@ public class Server {
     DataAccessGame game = new GameDAO();
     UserService userService = new UserService(user, auth);
     GameService gameService = new GameService(game, auth);
-
     ClearService clearService = new ClearService(user, auth, game);
 
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
-
         Spark.staticFiles.location("web");
-
-        // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::RegisterHandler);
         Spark.post("/session", this::LoginHandler);
         Spark.post(("/game"), this::CreateGameHandler);
@@ -39,9 +29,6 @@ public class Server {
         Spark.get(("/game"), this::ListGamesHandler);
         Spark.delete("/db", this::ClearApplicationHandler);
         Spark.delete("/session", this::LogoutHandler);
-
-
-
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -51,7 +38,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-
+    // Registers the User
     public Object RegisterHandler(Request req, Response res) throws DataAccessException {
         try {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
@@ -76,6 +63,7 @@ public class Server {
 
     }
 
+    // Login the User
     public Object LoginHandler(Request req, Response res) throws DataAccessException {
         try {
             LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
@@ -98,6 +86,7 @@ public class Server {
         }
     }
 
+    // Logout the User
     public Object LogoutHandler(Request req, Response res) throws DataAccessException {
         try {
             String authToken = req.headers("Authorization");
@@ -120,6 +109,7 @@ public class Server {
         }
     }
 
+    // Creates the Game
     public Object CreateGameHandler(Request req, Response res) throws DataAccessException {
         try {
             String authToken = req.headers("Authorization");
@@ -146,6 +136,7 @@ public class Server {
         }
     }
 
+    // Joins a Game
     public Object JoinGameHandler(Request req, Response res) throws DataAccessException {
         try {
             String authToken = req.headers("Authorization");
@@ -175,6 +166,7 @@ public class Server {
         }
     }
 
+    // Lists the Game
     public Object ListGamesHandler(Request req, Response res) throws DataAccessException{
         try {
             String authToken = req.headers("Authorization");
@@ -195,6 +187,8 @@ public class Server {
             }
         }
     }
+
+    // Clears all the Games and Users
     public Object ClearApplicationHandler(Request req, Response res) throws DataAccessException {
         try {
             clearService.clearEverything();

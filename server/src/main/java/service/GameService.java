@@ -8,7 +8,6 @@ import dataAccess.DataAccessException;
 import dataAccess.DataAccessGame;
 import model.AuthToken;
 import model.Game;
-
 import java.util.ArrayList;
 
 public class GameService {
