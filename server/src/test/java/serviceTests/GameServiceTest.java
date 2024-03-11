@@ -34,7 +34,7 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), null);
 
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest, authToken.getToken()));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest("", "Exploding Chess");
 
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.createGame(gameRequest, ""));
     }
 
     @Test
@@ -79,15 +79,15 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", game.getGameID());
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
         joinGameBlackRequest.addAuthToken(authToken.getToken());
         joinGameWhiteRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
     }
 
     @Test
@@ -102,18 +102,18 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
         joinGameBlackRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
     }
 
     @Test
     @DisplayName("JoinGame Fail")
-    void testJoinGamePlayerFail(){
+    void testJoinGameWatch(){
         RegisterRequest request = new RegisterRequest();
         request.setUserName(testUser.getName());
         request.setUserPassword(testUser.getPassword());
@@ -123,12 +123,11 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest(null, gameID);
-        joinGameBlackRequest.addAuthToken(authToken.getToken());
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest(null, game.getGameID());
 
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
     }
 
     @Test
@@ -143,12 +142,11 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
-        joinGameBlackRequest.addAuthToken("");
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
 
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameBlackRequest, ""));
 
     }
 
@@ -164,13 +162,13 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", game.getGameID());
         joinGameWhiteRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
-        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
+        Assertions.assertThrows(DataAccessException.class, ()->gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
     }
 
     @Test
@@ -185,15 +183,15 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", game.getGameID());
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
         joinGameBlackRequest.addAuthToken(authToken.getToken());
         joinGameWhiteRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
 
         ListGamesRequest gamesRequest = new ListGamesRequest(authToken.getToken());
 
@@ -211,15 +209,15 @@ public class GameServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(()->gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", game.getGameID());
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
         joinGameBlackRequest.addAuthToken(authToken.getToken());
         joinGameWhiteRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest));
-        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
+        Assertions.assertDoesNotThrow(()->gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
 
         ListGamesRequest gamesRequest = new ListGamesRequest("");
 

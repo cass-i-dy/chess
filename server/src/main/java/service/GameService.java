@@ -19,9 +19,9 @@ public class GameService {
         this.dataAccessAuth = dataAccessAuth;
     }
 
-    public String createGame(CreateGameRequest request) throws DataAccessException {
+    public Game createGame(CreateGameRequest request, String authTokenString) throws DataAccessException {
         String gameName = request.getGameName();
-        String authTokenString = request.getAuthToken();
+//        String authTokenString = request.getAuthToken();
         AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
         if (authToken == null){
             throw new DataAccessException("Error: unauthorized");
@@ -33,18 +33,18 @@ public class GameService {
             throw new DataAccessException("Error: bad request");
         }
         dataAccess.addGame(gameName);
-        return dataAccess.getGameID(gameName);
+        return dataAccess.getGame(dataAccess.getGameID(gameName));
     }
 
-    public void joinGame(JoinGameRequest request) throws DataAccessException {
+    public void joinGame(JoinGameRequest request, String authTokenString) throws DataAccessException {
         String gameID = request.getGameID();
         String playerColor = request.getPlayerColor();
-        String authTokenString = request.getAuthToken();
+//        String authTokenString = request.getAuthToken();
         AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
         if (authToken == null){
             throw new DataAccessException("Error: unauthorized");
         }
-        if (gameID == null || playerColor == null){
+        if (gameID == null){
             throw new DataAccessException("Error: bad request");
         }
         Game game = dataAccess.getGame(gameID);

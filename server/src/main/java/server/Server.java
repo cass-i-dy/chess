@@ -73,7 +73,7 @@ public class Server {
         }
         catch (DataAccessException e){
             var message = e.getMessage();
-            if (message == "Error: unauthorized"){
+            if (message.equals("Error: unauthorized")){
                 res.status(401);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
 
@@ -115,9 +115,10 @@ public class Server {
             String authToken = req.headers("Authorization");
             CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
             request.addAuthToken(authToken);
-            String gameID = gameService.createGame(request);
+            Game game = gameService.createGame(request, authToken);
             res.status(200);
-            return new Gson().toJson(gameID);
+            return new Gson().toJson(game);
+//            return new Gson().toJson(gameID);
         }
         catch (DataAccessException e){
             var message = e.getMessage();
@@ -142,7 +143,7 @@ public class Server {
             String authToken = req.headers("Authorization");
             JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
             request.addAuthToken(authToken);
-            gameService.joinGame(request);
+            gameService.joinGame(request, authToken);
             res.status(200);
             return "{}";
         }
@@ -173,7 +174,8 @@ public class Server {
             ListGamesRequest request = new ListGamesRequest(authToken);
             ArrayList<Game> games = gameService.listGames(request);
             res.status(200);
-            return "{ \"games\":" + new Gson().toJson(games) +"}";
+            System.out.println(new Gson().toJson(games));
+            return new Gson().toJson(Map.of("games", games));
         }
         catch (DataAccessException e) {
             var message = e.getMessage();

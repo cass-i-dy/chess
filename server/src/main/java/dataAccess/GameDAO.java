@@ -42,11 +42,14 @@ public class GameDAO implements DataAccessGame{
     }
 
     public Boolean setGame(Game game, String playerColor, String userName){
-        if (playerColor.equals("WHITE") && (game.getWhite().isEmpty())){
+        if (playerColor == null) {
+            return true;
+        }
+        if (playerColor.equals("WHITE") && (game.getWhite() == null)){
             game.setWhite(userName);
             return true;
         }
-        else if (playerColor.equals("BLACK") && (game.getBlack().isEmpty())){
+        else if (playerColor.equals("BLACK") && (game.getBlack() == null)){
             game.setBlack(userName);
             return true;
         }

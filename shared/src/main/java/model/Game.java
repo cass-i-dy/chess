@@ -3,12 +3,15 @@ package model;
 public class Game {
     String gameName;
     String gameID;
-    String whiteUserName = "";
-    String blackUserName = "";
+    String whiteUsername;
+    String blackUsername;
 
     public Game(String gameName, String gameID){
         this.gameName = gameName;
         this.gameID = gameID;
+        this.whiteUsername = null;
+        this.blackUsername = null;
+
     }
 
     public String getName(){
@@ -20,15 +23,15 @@ public class Game {
     }
 
     public String getWhite(){
-        return whiteUserName;
+        return whiteUsername;
     }
     public String getBlack(){
-        return blackUserName;
+        return blackUsername;
     }
     public void setWhite(String playerWhite){
-        whiteUserName = playerWhite;
+        whiteUsername = playerWhite;
     }
     public void setBlack(String playerBlack){
-        blackUserName = playerBlack;
+        blackUsername = playerBlack;
     }
 }

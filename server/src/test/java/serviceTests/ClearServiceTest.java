@@ -2,6 +2,7 @@ package serviceTests;
 
 import dataAccess.*;
 import model.AuthToken;
+import model.Game;
 import model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,15 +41,15 @@ public class ClearServiceTest {
 
         CreateGameRequest gameRequest = new CreateGameRequest(authToken.getToken(), "Exploding Chess");
 
-        String gameID = Assertions.assertDoesNotThrow(() -> gameService.createGame(gameRequest));
+        Game game = Assertions.assertDoesNotThrow(() -> gameService.createGame(gameRequest, authToken.getToken()));
 
-        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", gameID);
-        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", gameID);
+        JoinGameRequest joinGameWhiteRequest = new JoinGameRequest("WHITE", game.getGameID());
+        JoinGameRequest joinGameBlackRequest = new JoinGameRequest("BLACK", game.getGameID());
         joinGameBlackRequest.addAuthToken(authToken.getToken());
         joinGameWhiteRequest.addAuthToken(authToken.getToken());
 
-        Assertions.assertDoesNotThrow(() -> gameService.joinGame(joinGameBlackRequest));
-        Assertions.assertDoesNotThrow(() -> gameService.joinGame(joinGameWhiteRequest));
+        Assertions.assertDoesNotThrow(() -> gameService.joinGame(joinGameBlackRequest, authToken.getToken()));
+        Assertions.assertDoesNotThrow(() -> gameService.joinGame(joinGameWhiteRequest, authToken.getToken()));
 
         ListGamesRequest gamesRequest = new ListGamesRequest(authToken.getToken());
 
