@@ -118,7 +118,6 @@ public class Server {
             Game game = gameService.createGame(request, authToken);
             res.status(200);
             return new Gson().toJson(game);
-//            return new Gson().toJson(gameID);
         }
         catch (DataAccessException e){
             var message = e.getMessage();

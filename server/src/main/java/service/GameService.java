@@ -21,7 +21,6 @@ public class GameService {
 
     public Game createGame(CreateGameRequest request, String authTokenString) throws DataAccessException {
         String gameName = request.getGameName();
-//        String authTokenString = request.getAuthToken();
         AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
         if (authToken == null){
             throw new DataAccessException("Error: unauthorized");
@@ -39,7 +38,6 @@ public class GameService {
     public void joinGame(JoinGameRequest request, String authTokenString) throws DataAccessException {
         String gameID = request.getGameID();
         String playerColor = request.getPlayerColor();
-//        String authTokenString = request.getAuthToken();
         AuthToken authToken = dataAccessAuth.findAuthToken(authTokenString);
         if (authToken == null){
             throw new DataAccessException("Error: unauthorized");

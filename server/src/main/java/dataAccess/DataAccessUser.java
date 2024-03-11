@@ -9,6 +9,5 @@ public interface DataAccessUser {
     AuthToken createAuthToken(String userName) throws DataAccessException;
 
     void clearAllUsers() throws DataAccessException;
-
 }
 
