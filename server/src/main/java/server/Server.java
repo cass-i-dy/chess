@@ -39,7 +39,7 @@ public class Server {
     }
 
     // Registers the User
-    public Object RegisterHandler(Request req, Response res) throws DataAccessException {
+    public Object RegisterHandler(Request req, Response res) {
         try {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
             AuthToken authToken = userService.createUser(request);
@@ -64,7 +64,7 @@ public class Server {
     }
 
     // Login the User
-    public Object LoginHandler(Request req, Response res) throws DataAccessException {
+    public Object LoginHandler(Request req, Response res) {
         try {
             LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
             AuthToken authToken = userService.findLogin(request);
@@ -87,7 +87,7 @@ public class Server {
     }
 
     // Logout the User
-    public Object LogoutHandler(Request req, Response res) throws DataAccessException {
+    public Object LogoutHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             LogoutRequest request = new LogoutRequest(authToken);
@@ -110,7 +110,7 @@ public class Server {
     }
 
     // Creates the Game
-    public Object CreateGameHandler(Request req, Response res) throws DataAccessException {
+    public Object CreateGameHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
@@ -137,7 +137,7 @@ public class Server {
     }
 
     // Joins a Game
-    public Object JoinGameHandler(Request req, Response res) throws DataAccessException {
+    public Object JoinGameHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
@@ -167,7 +167,7 @@ public class Server {
     }
 
     // Lists the Game
-    public Object ListGamesHandler(Request req, Response res) throws DataAccessException{
+    public Object ListGamesHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             ListGamesRequest request = new ListGamesRequest(authToken);
@@ -190,7 +190,7 @@ public class Server {
     }
 
     // Clears all the Games and Users
-    public Object ClearApplicationHandler(Request req, Response res) throws DataAccessException {
+    public Object ClearApplicationHandler(Request req, Response res) {
         try {
             clearService.clearEverything();
             res.status(200);

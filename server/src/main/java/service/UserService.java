@@ -26,6 +26,7 @@ public class UserService {
             throw new DataAccessException("Error: already taken");
         }
         dataAccess.addUser(username, password, email);
+        // make create auth tken here insead of userdoa
         AuthToken authToken = dataAccess.createAuthToken(username);
         authAccess.addAuthToken(authToken);
         return authToken;
