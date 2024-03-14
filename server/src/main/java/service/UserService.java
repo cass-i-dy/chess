@@ -27,7 +27,7 @@ public class UserService {
         }
         dataAccess.addUser(username, password, email);
         // make create auth tken here insead of userdoa
-        AuthToken authToken = dataAccess.createAuthToken(username);
+        AuthToken authToken = authAccess.createAuthToken(username);
         authAccess.addAuthToken(authToken);
         return authToken;
     }
@@ -42,7 +42,7 @@ public class UserService {
         if(!user.getPassword().equals(password)) {
             throw new DataAccessException("Error: unauthorized");
         }
-        AuthToken authToken =  dataAccess.createAuthToken(username);
+        AuthToken authToken =  authAccess.createAuthToken(username);
         authAccess.addAuthToken(authToken);
         return authToken;
 

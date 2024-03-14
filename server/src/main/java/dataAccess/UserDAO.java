@@ -21,9 +21,6 @@ public class UserDAO implements DataAccessUser {
         userList.add(user);
     }
 
-    public AuthToken createAuthToken(String userName){
-        return new AuthToken(userName);
-    }
 
     public void clearAllUsers(){
         userList.clear();

@@ -6,7 +6,6 @@ public interface DataAccessUser {
 
     User getUser(String userName) throws DataAccessException;
 
-    AuthToken createAuthToken(String userName) throws DataAccessException;
 
     void clearAllUsers() throws DataAccessException;
 }

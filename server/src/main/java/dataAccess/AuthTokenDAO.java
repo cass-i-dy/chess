@@ -19,6 +19,11 @@ public class AuthTokenDAO implements DataAccessAuth {
         return null;
     }
 
+    public AuthToken createAuthToken(String userName){
+        return new AuthToken(userName);
+    }
+
+
     public void removeAuthToken(AuthToken authToken){
         authTokens.remove(authToken);
     }
