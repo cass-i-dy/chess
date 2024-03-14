@@ -1,7 +1,7 @@
 package dataAccess;
 
 import model.AuthToken;
-import model.User;
+import org.junit.jupiter.api.function.Executable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +30,6 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
         String userName = authToken.getName();
         var statement = "INSERT INTO authtokens (username, authtoken) VALUES (?, ?)";
         executeUpdate(statement, userName, authString);
-
     }
 
     @Override
@@ -52,7 +51,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
         return null;
     }
 
-    private AuthToken readAuth(ResultSet rs) throws SQLException {
+    private AuthToken readAuth(ResultSet rs) throws DataAccessException, SQLException {
         String userName = rs.getString("username");
         String authTokenString = rs.getString("authtoken");
         if (userName == null || authTokenString == null){
@@ -63,7 +62,9 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
 
     @Override
     public void removeAuthToken(AuthToken authToken) throws DataAccessException {
-
+        String authTokenString = authToken.getToken();
+        var statement = "DELETE FROM authtokens WHERE authtoken='" + authTokenString + "'";
+        executeUpdate(statement);
     }
 
     @Override

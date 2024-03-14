@@ -1,5 +1,6 @@
 package dataAccess;
 import model.AuthToken;
+import org.junit.jupiter.api.function.Executable;
 
 public interface DataAccessAuth {
     void addAuthToken(AuthToken authToken) throws DataAccessException;
