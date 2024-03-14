@@ -3,15 +3,18 @@ package dataAccess;
 import model.AuthToken;
 import model.User;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUser{
 
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
-              `username` String NOT NULL,
-              `password` String NOT NULL,
-              `email` String NOT NULL ,
-              PRIMARY KEY (`user`),
+              `username` varchar(255) NOT NULL,
+              `password` varchar(255) NOT NULL,
+              `email` varchar(255) NOT NULL ,
+              PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -22,34 +25,46 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
     }
     @Override
     public void addUser(String userName, String password, String email) throws DataAccessException {
-        var statement = "INSERT INTO Users (username, password, email) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, userName, password, email);
 
     }
 
-//    @Override
-//    public User getUser(String userName) throws DataAccessException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            var statement = "SELECT user FROM Users WHERE user=?";
-//            try (var ps = conn.prepareStatement(statement)) {
-//                ps.setInt(1, userName);
-//                try(var rs = ps.executeQuery()) {
-//                    if (rs.next()){
-//                        return;
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
-    public User getUser(String userName) throws DataAccessException {
+    @Override
+    public User getUser(String userName) throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM users WHERE username=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, userName);
+                try(var rs = ps.executeQuery()) {
+                    if (rs.next()){
+                        return readUser(rs);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
     }
+
+    private User readUser(ResultSet rs) throws SQLException {
+        String userName = rs.getString("username");
+        String password = rs.getString("password");
+        String email = rs.getString("email");
+        if (userName == null || password == null || email == null){
+            return null;
+        }
+        return new User(userName, password, email);
+    }
+
 
 
     @Override
     public void clearAllUsers() throws DataAccessException {
+        var statement = "TRUNCATE TABLE users";
+        executeUpdate(statement);
 
     }
 

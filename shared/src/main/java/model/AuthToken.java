@@ -6,9 +6,9 @@ public class AuthToken {
 
     String authToken;
     String username;
-    public AuthToken(String username){
+    public AuthToken(String username, String authToken){
         this.username = username;
-        this.authToken = UUID.randomUUID().toString();
+        this.authToken = authToken;
     }
 
     public String getName(){

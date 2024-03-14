@@ -6,6 +6,8 @@ import model.Game;
 import spark.*;
 import service.*;
 import com.google.gson.Gson;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -59,6 +61,8 @@ public class Server {
                 res.status(500);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -83,6 +87,8 @@ public class Server {
                 return new Gson().toJson(Map.of("message", e.getMessage()));
 
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

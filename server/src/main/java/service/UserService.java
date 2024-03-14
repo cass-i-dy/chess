@@ -5,6 +5,9 @@ import dataAccess.DataAccessException;
 import model.*;
 import requests.*;
 
+import java.sql.SQLException;
+import java.util.UUID;
+
 public class UserService {
     DataAccessUser dataAccess;
     DataAccessAuth authAccess;
@@ -15,7 +18,7 @@ public class UserService {
         this.authAccess = authAccess;
     }
 
-    public AuthToken createUser(RegisterRequest request) throws DataAccessException {
+    public AuthToken createUser(RegisterRequest request) throws DataAccessException, SQLException {
         String username = request.getUsername();
         String password = request.getPassword();
         String email = request.getEmail();
@@ -32,7 +35,7 @@ public class UserService {
         return authToken;
     }
 
-    public AuthToken findLogin(LoginRequest request) throws DataAccessException {
+    public AuthToken findLogin(LoginRequest request) throws DataAccessException, SQLException {
         String username = request.getUsername();
         String password = request.getPassword();
         User user = dataAccess.getUser(username);
