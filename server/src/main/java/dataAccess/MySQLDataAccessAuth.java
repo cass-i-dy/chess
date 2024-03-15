@@ -19,13 +19,12 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
             """
     };
 
-    public MySQLDataAccessAuth() throws DataAccessException {
-        super();
-        configureDatabase(createStatements);
+    public MySQLDataAccessAuth() {
     }
 
     @Override
     public void addAuthToken(AuthToken authToken) throws DataAccessException {
+        configureDatabase(createStatements);
         String authString = authToken.getToken();
         String userName = authToken.getName();
         var statement = "INSERT INTO authtokens (username, authtoken) VALUES (?, ?)";
@@ -34,6 +33,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
 
     @Override
     public AuthToken findAuthToken(String authTokenString) throws DataAccessException {
+        configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM authtokens WHERE authtoken=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -46,6 +46,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
             }
         }
         catch (Exception e) {
+            configureDatabase(createStatements);
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
         return null;
@@ -62,6 +63,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
 
     @Override
     public void removeAuthToken(AuthToken authToken) throws DataAccessException {
+        configureDatabase(createStatements);
         String authTokenString = authToken.getToken();
         var statement = "DELETE FROM authtokens WHERE authtoken='" + authTokenString + "'";
         executeUpdate(statement);
@@ -69,6 +71,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
 
     @Override
     public AuthToken createAuthToken(String userName) throws DataAccessException {
+        configureDatabase(createStatements);
         return new AuthToken(userName, UUID.randomUUID().toString());
     }
 

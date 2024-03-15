@@ -8,7 +8,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySQLDataAccess {
 
-    public MySQLDataAccess() throws DataAccessException {
+    public MySQLDataAccess() {
     }
 
     public int executeUpdate(String statement, Object... params) throws DataAccessException {

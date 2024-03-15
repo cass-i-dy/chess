@@ -19,12 +19,11 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
             """
     };
 
-    public MySQLDataAccessUser() throws DataAccessException {
-        super();
-        configureDatabase(createStatements);
+    public MySQLDataAccessUser() {
     }
     @Override
     public void addUser(String userName, String password, String email) throws DataAccessException {
+        configureDatabase(createStatements);
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, userName, password, email);
 
@@ -32,6 +31,7 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
 
     @Override
     public User getUser(String userName) throws DataAccessException, SQLException {
+        configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM users WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -63,6 +63,7 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
 
     @Override
     public void clearAllUsers() throws DataAccessException {
+        configureDatabase(createStatements);
         var statement = "TRUNCATE TABLE users";
         executeUpdate(statement);
 

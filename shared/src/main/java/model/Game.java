@@ -6,11 +6,11 @@ public class Game {
     String whiteUsername;
     String blackUsername;
 
-    public Game(String gameName, String gameID){
+    public Game(String gameName, String gameID, String whiteUsername, String blackUsername){
         this.gameName = gameName;
         this.gameID = gameID;
-        this.whiteUsername = "";
-        this.blackUsername = "";
+        this.whiteUsername = whiteUsername;
+        this.blackUsername = blackUsername;
 
     }
 

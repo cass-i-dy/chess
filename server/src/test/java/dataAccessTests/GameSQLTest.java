@@ -15,7 +15,7 @@ public class GameSQLTest {
     ;
 
 
-    Game testGame = new Game("Pokemon", "1");
+    Game testGame = new Game("Pokemon", "1", "", "");
 
     public GameSQLTest() throws DataAccessException {
     }

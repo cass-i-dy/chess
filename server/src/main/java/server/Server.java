@@ -13,12 +13,18 @@ import java.util.Map;
 
 
 public class Server {
-    DataAccessUser user = new UserDAO();
-    DataAccessAuth auth = new AuthTokenDAO();
-    DataAccessGame game = new GameDAO();
+//    DataAccessUser user = new UserDAO();
+//    DataAccessAuth auth = new AuthTokenDAO();
+//    DataAccessGame game = new GameDAO();
+
+    MySQLDataAccessUser user = new MySQLDataAccessUser();
+    MySQLDataAccessAuth auth = new MySQLDataAccessAuth();
+    MySQLDataAccessGame game = new MySQLDataAccessGame();
     UserService userService = new UserService(user, auth);
     GameService gameService = new GameService(game, auth);
     ClearService clearService = new ClearService(user, auth, game);
+
+
 
 
     public int run(int desiredPort) {

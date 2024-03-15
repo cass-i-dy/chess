@@ -16,29 +16,29 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             CREATE TABLE IF NOT EXISTS  games (
               `gamename` varchar(255) NOT NULL,
               `gameid` varchar(255) NOT NULL,
-              `whiteusername` varchar(255) NULL ,
-              `blackusername` varchar(255) NULL ,
+              `whiteusername` varchar(255) ,
+              `blackusername` varchar(255) ,
 
               PRIMARY KEY (`gameid`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
 
-    public MySQLDataAccessGame() throws DataAccessException {
-        super();
-        configureDatabase(createStatements);
-
+    public MySQLDataAccessGame() {
     }
+
 
     @Override
     public void addGame(String gameName) throws DataAccessException {
+        configureDatabase(createStatements);
         var statement = "INSERT INTO games (gamename, gameid, whiteusername, blackusername) VALUES (?,?,?,?)";
-        executeUpdate(statement, gameName, countGameID, "", "");
+        executeUpdate(statement, gameName, countGameID, null, null);
         countGameID++;
     }
 
     @Override
     public String getGameID(String gameName) throws DataAccessException {
+        configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM games WHERE gamename=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -66,11 +66,12 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         if (gameName == null || gameID == null){
             return null;
         }
-        return new Game(gameName, gameID);
+        return new Game(gameName, gameID, whiteUserName, blackUserName);
     }
 
     @Override
     public Boolean getGameName(String gameName) throws DataAccessException {
+        configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM games WHERE gamename=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -86,11 +87,12 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        return null;
+        return false;
     }
 
     @Override
     public Game getGame(String gameID) throws DataAccessException {
+        configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM games WHERE gameid=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -110,10 +112,11 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
 
     @Override
     public Boolean setGame(Game game, String playerColor, String userName) throws DataAccessException {
+        configureDatabase(createStatements);
         if (playerColor == null) {
             return true;
         }
-        if (playerColor.equals("WHITE") && (game.getWhite().isEmpty())){
+        if (playerColor.equals("WHITE") && (game.getWhite() == null)){
             game.setWhite(userName);
             var statementDelete = "DELETE FROM games WHERE gameid = ?";
             executeUpdate(statementDelete, game.getGameID());
@@ -121,10 +124,10 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack());
             return true;
         }
-        else if (playerColor.equals("BLACK") && (game.getBlack().isEmpty())){
+        else if (playerColor.equals("BLACK") && (game.getBlack() == null)){
             game.setBlack(userName);
-            var statemtentDelete = "DELETE FROM games WHERE gameid = ?";
-            executeUpdate(statemtentDelete, game.getGameID());
+            var statementDelete = "DELETE FROM games WHERE gameid = ?";
+            executeUpdate(statementDelete, game.getGameID());
             var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername) Values(?,?,?,?) ";
             executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack());
             return true;
@@ -137,6 +140,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
 
     @Override
     public ArrayList<Game> getList() throws DataAccessException {
+        configureDatabase(createStatements);
         var result = new ArrayList<Game>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gamename, gameid, whiteusername, blackusername FROM games";
@@ -155,6 +159,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
 
     @Override
     public void clearAllGames() throws DataAccessException {
+        countGameID = 1;
         var statement = "TRUNCATE TABLE games";
         executeUpdate(statement);
     }

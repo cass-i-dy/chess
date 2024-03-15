@@ -8,7 +8,9 @@ public class GameDAO implements DataAccessGame{
     int countGameID = 1;
 
     public void addGame(String gameName) {
-        Game game = new Game(gameName, String.valueOf(countGameID));
+        String whiteUsername = null;
+        String blackUsername = null;
+        Game game = new Game(gameName, String.valueOf(countGameID),whiteUsername, blackUsername );
         countGameID += 1;
         games.add(game);
 
