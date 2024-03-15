@@ -9,8 +9,8 @@ public class Game {
     public Game(String gameName, String gameID){
         this.gameName = gameName;
         this.gameID = gameID;
-        this.whiteUsername = null;
-        this.blackUsername = null;
+        this.whiteUsername = "";
+        this.blackUsername = "";
 
     }
 
