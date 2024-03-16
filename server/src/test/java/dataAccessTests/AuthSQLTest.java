@@ -10,30 +10,24 @@ import org.junit.jupiter.api.Test;
 import requests.RegisterRequest;
 import service.UserService;
 
+import java.sql.SQLException;
+
 public class AuthSQLTest {
     MySQLDataAccessAuth authAccess = new MySQLDataAccessAuth();
 
 
     User testUser = new User("Splash", "1234", "sparklytomato@gmail.com");
 
-    public AuthSQLTest() throws DataAccessException {
-    }
 
     @BeforeEach
     void start() {
-//        Assertions.assertDoesNotThrow(userAccess::clearAllUsers);
         Assertions.assertDoesNotThrow(authAccess::clearAllAuth);
-//        Assertions.assertDoesNotThrow(gameAccess::clearAllGames);
     }
 
     @Test
     @DisplayName("CreateAuthToken Success")
     void testCreateAuthTokenPass() {
         AuthToken authToken = Assertions.assertDoesNotThrow(() -> authAccess.createAuthToken(testUser.getName()));
-
-//        Assertions.assertEquals(testUser.getName(), (Assertions.assertDoesNotThrow(()->userAccess.getUser(testUser.getName()))).getName());
-//        Assertions.assertEquals(testUser.getPassword(), (Assertions.assertDoesNotThrow(()->userAccess.getUser(testUser.getName()))).getPassword());
-//        Assertions.assertEquals(testUser.getEmail(), (Assertions.assertDoesNotThrow(()->userAccess.getUser(testUser.getName()))).getEmail());
     }
 
     @Test
@@ -52,10 +46,34 @@ public class AuthSQLTest {
     }
 
     @Test
+    @DisplayName("FindAuthToken Fail")
+    void testFindAuthTokenFail(){
+        AuthToken authToken = Assertions.assertDoesNotThrow(()-> authAccess.createAuthToken(testUser.getName()));
+        Assertions.assertNull(Assertions.assertDoesNotThrow(()->authAccess.findAuthToken(authToken.getToken())));
+    }
+
+    @Test
     @DisplayName("RemoveAuthToken Success")
     void testRemoveAuthTokenPass(){
         AuthToken authToken = Assertions.assertDoesNotThrow(()-> authAccess.createAuthToken(testUser.getName()));
         Assertions.assertDoesNotThrow(()->authAccess.addAuthToken(authToken));
         Assertions.assertDoesNotThrow(()->authAccess.removeAuthToken(authToken));
+    }
+
+    @Test
+    @DisplayName("RemoveAuthToken Fail")
+    void testRemoveAuthTokenFail(){
+        AuthToken authToken = Assertions.assertDoesNotThrow(()-> authAccess.createAuthToken(testUser.getName()));
+        Assertions.assertDoesNotThrow(()->authAccess.removeAuthToken(authToken));
+        Assertions.assertNull(Assertions.assertDoesNotThrow(()->authAccess.findAuthToken(authToken.getToken())));
+    }
+
+    @Test
+    @DisplayName("ClearAuthToken Success")
+    void testClearAuthTokenSuccess(){
+        AuthToken authToken = Assertions.assertDoesNotThrow(()-> authAccess.createAuthToken(testUser.getName()));
+        Assertions.assertDoesNotThrow(()->authAccess.addAuthToken(authToken));
+        Assertions.assertDoesNotThrow(()->authAccess.clearAllAuth());
+        Assertions.assertNull(Assertions.assertDoesNotThrow(()->authAccess.findAuthToken(authToken.getToken())));
     }
 }
