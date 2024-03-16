@@ -24,7 +24,7 @@ public class AuthSQLTest {
     @Test
     @DisplayName("CreateAuthToken Success")
     void testCreateAuthTokenPass() {
-        AuthToken authToken = Assertions.assertDoesNotThrow(() -> authAccess.createAuthToken(testUser.getName()));
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuthToken(testUser.getName()));
     }
 
     @Test
