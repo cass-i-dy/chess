@@ -1,8 +1,6 @@
 package dataAccess;
 
-
 import model.User;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,8 +17,6 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
             """
     };
 
-    public MySQLDataAccessUser() {
-    }
     @Override
     public void addUser(String userName, String password, String email) throws DataAccessException {
         configureDatabase(createStatements);
@@ -30,7 +26,7 @@ public class MySQLDataAccessUser extends MySQLDataAccess implements DataAccessUs
     }
 
     @Override
-    public User getUser(String userName) throws DataAccessException, SQLException {
+    public User getUser(String userName) throws DataAccessException {
         configureDatabase(createStatements);
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM users WHERE username=?";

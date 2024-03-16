@@ -13,9 +13,6 @@ import java.util.Map;
 
 
 public class Server {
-//    DataAccessUser user = new UserDAO();
-//    DataAccessAuth auth = new AuthTokenDAO();
-//    DataAccessGame game = new GameDAO();
 
     MySQLDataAccessUser user = new MySQLDataAccessUser();
     MySQLDataAccessAuth auth = new MySQLDataAccessAuth();

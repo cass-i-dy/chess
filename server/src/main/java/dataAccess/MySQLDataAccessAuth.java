@@ -1,7 +1,6 @@
 package dataAccess;
 
 import model.AuthToken;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -17,9 +16,6 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-    public MySQLDataAccessAuth() {
-    }
 
     @Override
     public void addAuthToken(AuthToken authToken) throws DataAccessException {

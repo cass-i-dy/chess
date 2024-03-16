@@ -1,8 +1,6 @@
 package dataAccess;
 
 import model.Game;
-
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,10 +21,6 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-    public MySQLDataAccessGame() {
-    }
-
 
     @Override
     public void addGame(String gameName) throws DataAccessException {
