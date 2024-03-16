@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import requests.RegisterRequest;
-import service.UserService;
 
-import java.sql.SQLException;
 
 public class AuthSQLTest {
     MySQLDataAccessAuth authAccess = new MySQLDataAccessAuth();

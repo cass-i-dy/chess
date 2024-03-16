@@ -1,7 +1,7 @@
 package dataAccess;
 
 import model.Game;
-import model.User;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
