@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.AuthToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,8 +19,14 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void getHelp(String message) throws ResponseException {
+    public void login(String message) throws ResponseException {
+        var path = "/session";
+//        return this.makeRequest("POST", path, , null);
+    }
 
+    public AuthToken register(String message) throws ResponseException {
+        var path = "/user";
+        return this.makeRequest("POST", path, message, AuthToken.class);
     }
 
 

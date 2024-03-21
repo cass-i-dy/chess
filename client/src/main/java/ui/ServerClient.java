@@ -28,7 +28,7 @@ public class ServerClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "signin" -> signIn(params);
+                case "signin" -> login(params);
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -36,10 +36,18 @@ public class ServerClient {
         }
     }
 
-    public String signIn(String... params) throws ResponseException {
-        if (params.length >= 1) {
-
+    public String register(String... params) throws ResponseException {
+        if (params.length >= 3) {
+            return String.valueOf(server.register(Arrays.toString(params)));
         }
+        throw new ResponseException(400, "Expected: <yourname>");
+    }
+
+    public String login(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            return null;
+        }
+        throw new ResponseException(400, "Expected: <yourname>");
     }
 
     public String help() {
@@ -55,8 +63,6 @@ public class ServerClient {
                 - ListGame
                 - JoinGame
                 - logout
-
-              
                 
                 """;
     }
