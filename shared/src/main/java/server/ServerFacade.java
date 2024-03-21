@@ -19,9 +19,9 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void login(String message) throws ResponseException {
+    public AuthToken login(String message) throws ResponseException {
         var path = "/session";
-//        return this.makeRequest("POST", path, , null);
+        return this.makeRequest("POST", path, message,AuthToken.class);
     }
 
     public AuthToken register(String message) throws ResponseException {
