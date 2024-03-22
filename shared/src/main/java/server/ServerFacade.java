@@ -19,14 +19,19 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public AuthToken login(String message) throws ResponseException {
-        var path = "/session";
-        return this.makeRequest("POST", path, message,AuthToken.class);
-    }
-
     public AuthToken register(String message) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, message, AuthToken.class);
+    }
+    public AuthToken login(String message) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("POST", path, message, AuthToken.class);
+    }
+
+
+    public Object logout(String message) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, message, null);
     }
 
 
