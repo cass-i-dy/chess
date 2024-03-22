@@ -1,7 +1,6 @@
 import java.util.Scanner;
-import ui.*;
 
-public class ConsoleUser {
+public class ConsolePreLogin {
     static Scanner scanner = new Scanner(System.in);
 
 
@@ -13,13 +12,13 @@ public class ConsoleUser {
         System.out.print("Option: ");
         int option = scanner.nextInt();
         processLoginChoice(option);
-
     }
 
     public static void processLoginChoice(int choice) {
         switch (choice) {
             case 1:
                 System.out.print("");
+                ConsolePostLogin.gameDisplay();
             case 2:
                 System.out.print("");
             case 3:

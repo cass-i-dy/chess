@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class ConsoleGame {
+public class ConsolePostLogin {
 
     static Scanner scanner = new Scanner(System.in);
 
