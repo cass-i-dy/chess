@@ -52,7 +52,8 @@ public class ServerClient {
 
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
-            return String.valueOf(serverFacade.login(Arrays.toString(params)));
+            User user = new User(params[1], params[2], null);
+            return String.valueOf(serverFacade.login(user));
         }
         throw new ResponseException(400, "Expected: <yourname>");
     }
