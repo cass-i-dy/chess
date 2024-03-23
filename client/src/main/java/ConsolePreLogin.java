@@ -38,6 +38,8 @@ public class ConsolePreLogin {
             case "help":
                 System.out.println(serverClient.help());
                 loginDisplay();
+            case "game":
+                ConsoleGame.main(choice);
 
         }
 

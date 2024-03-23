@@ -64,9 +64,10 @@ public class ServerFacade {
 
             writeBody(request, http);
             http.connect();
-            throwIfNotSuccessful(http);
+//            throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             throw new ResponseException(500, ex.getMessage());
         }
     }

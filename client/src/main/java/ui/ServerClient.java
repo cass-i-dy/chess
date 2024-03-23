@@ -45,7 +45,9 @@ public class ServerClient {
             User user = new User(params[1], params[2], params[3]);
             this.auth = serverFacade.register(user);
         }
-        throw new ResponseException(400, "Expected: <yourname>");
+        else {
+            throw new ResponseException(400, "Expected: <yourname>");
+        }
     }
 
     public String login(String... params) throws ResponseException {
