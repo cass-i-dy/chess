@@ -1,43 +1,45 @@
+import exception.ResponseException;
+import ui.ServerClient;
+
 import java.util.Scanner;
 
 public class ConsolePostLogin {
 
     static Scanner scanner = new Scanner(System.in);
 
-    public static void gameDisplay() {
-        System.out.printf("%d. %s%n", 1, "create" );
-        System.out.printf("%d. %s%n", 2, "list" );
-        System.out.printf("%d. %s%n", 3, "join" );
-        System.out.printf("%d. %s%n", 4, "observe" );
-        System.out.printf("%d. %s%n", 5, "logout" );
-        System.out.printf("%d. %s%n", 6, "quit" );
-        System.out.printf("%d. %s%n", 7, "help" );
-        System.out.print("Option: ");
-        int option = scanner.nextInt();
-        processGameChoice(option);
+    static ServerClient serverClient;
+
+    public static void start(ServerClient server) throws ResponseException {
+        serverClient = server;
+        gameDisplay();
+    }
+
+
+    public static void gameDisplay() throws ResponseException {
+        String option = scanner.nextLine();
+        String[] parts = option.split("\\s+");
+        processGameChoice(parts);
 
     }
 
-    public static void processGameChoice(int option) {
-        switch (option) {
-            case 1:
+    public static void processGameChoice(String[] option) throws ResponseException {
+        switch (option[0].toLowerCase()) {
+            case "create":
+                serverClient.create(option);
+            case "list":
                 System.out.print("");
-            case 2:
+            case "join":
                 System.out.print("");
-            case 3:
+            case "observe":
                 System.out.print("");
-            case 4:
+            case "logout":
                 System.out.print("");
-            case 5:
+            case "quit":
                 System.out.print("");
-            case 6:
-                System.out.print("");
-            case 7:
+            case "help":
                 System.out.print("");
             default:
                 System.out.print("Invalid Option");
-
-
 
         }
     }

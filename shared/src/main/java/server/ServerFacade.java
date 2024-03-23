@@ -3,6 +3,8 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
+import model.Game;
+import model.User;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +21,7 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public AuthToken register(String message) throws ResponseException {
+    public AuthToken register(User message) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, message, AuthToken.class);
     }
@@ -34,12 +36,17 @@ public class ServerFacade {
         return this.makeRequest("DELETE", path, message, null);
     }
 
+    public Game create(Game message) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("GET", path, message, Game.class);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
+//            http.setRequestProperty("Authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);

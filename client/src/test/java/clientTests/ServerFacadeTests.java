@@ -3,6 +3,7 @@ package clientTests;
 import exception.ResponseException;
 import model.AuthToken;
 import model.Game;
+import model.User;
 import org.junit.jupiter.api.*;
 import requests.CreateGameRequest;
 import requests.JoinGameRequest;
@@ -23,7 +24,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        serverFacade = new ServerFacade("http://loalhost:"+port);
+        serverFacade = new ServerFacade("http://localhost:"+ port);
         System.out.println("Started test HTTP server on " + port);
     }
 
@@ -42,6 +43,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Test Register")
     void testRegister() {
-        Assertions.assertDoesNotThrow(()->serverFacade.register("username"));
+        User testUser = new User("username", "password", "email");
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
     }
 }

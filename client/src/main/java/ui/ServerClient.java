@@ -2,22 +2,23 @@ package ui;
 
 import exception.ResponseException;
 import model.AuthToken;
+import model.Game;
+import model.User;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
 public class ServerClient {
-    private String visitorName = null;
-    private final ServerFacade server;
+    private final ServerFacade serverFacade;
 
     private final String serverUrl;
 
-    private AuthToken auth;
+    private AuthToken auth = null;
 
 
 
     public ServerClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+        serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.auth = null;
     }
@@ -29,7 +30,7 @@ public class ServerClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "login" -> login(params);
-                case "register"->register(params);
+//                case "register"->register(params);
                 case "logout"->logout(params);
                 default -> help();
             };
@@ -38,39 +39,50 @@ public class ServerClient {
         }
     }
 
-    public String register(String... params) throws ResponseException {
+    public void register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            return String.valueOf(server.register(Arrays.toString(params)));
+            User user = new User(params[1], params[2], params[3]);
+            this.auth = serverFacade.register(user);
         }
         throw new ResponseException(400, "Expected: <yourname>");
     }
 
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
-            return String.valueOf(server.login(Arrays.toString(params)));
+            return String.valueOf(serverFacade.login(Arrays.toString(params)));
         }
         throw new ResponseException(400, "Expected: <yourname>");
     }
 
     public String logout(String... params) throws ResponseException {
         if (params.length >= 1) {
-            return server.logout(Arrays.toString(params)).toString();
+            return serverFacade.logout(Arrays.toString(params)).toString();
         }
         throw new ResponseException(400, "Expected");
+    }
+
+    public void create(String... params) throws ResponseException {
+        if (params.length >1) {
+            Game game = new Game (params[1], null, null, null);
+            serverFacade.create(game);
+        }
     }
 
     public String help() {
         if (auth == null) {
             return """
-                    - Register
-                    - login <yourname>
+                    - Register <username> <password> <email>
+                    - login <username> <password>
                     - quit
                     """;
         }
         return """
-                - CreateGame
-                - ListGame
-                - JoinGame
+                - create <gamename>
+                - list
+                - join <gameid> <white|black|empty>
+                - observe <gameid>
+                - quit
+                - help
                 - logout
                 """;
     }
