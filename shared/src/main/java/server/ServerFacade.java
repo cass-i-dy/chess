@@ -33,12 +33,25 @@ public class ServerFacade {
 
     public Object logout(String message) throws ResponseException {
         var path = "/session";
-        return this.makeRequest("DELETE", path, message, null);
+        return this.makeRequest("DELETE", path, null, null);
     }
 
     public Game create(Game message) throws ResponseException {
         var path = "/game";
         return this.makeRequest("GET", path, message, Game.class);
+    }
+
+    public Game[] list() throws ResponseException {
+        var path = "/game";
+        record listGameResponse(Game[] game) {
+        }
+        var response = this.makeRequest("GET", path, null, listGameResponse.class);
+        return response.game();
+    }
+
+    public void join(Game message) throws ResponseException {
+        var path = "/game";
+        this.makeRequest("PUT", path, message, Game.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {

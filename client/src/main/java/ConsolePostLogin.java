@@ -1,6 +1,7 @@
 import exception.ResponseException;
 import ui.ServerClient;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ConsolePostLogin {
@@ -16,7 +17,7 @@ public class ConsolePostLogin {
 
 
     public static void gameDisplay() throws ResponseException {
-        String option = scanner.nextLine();
+        String option = scanner.nextLine().toUpperCase();
         String[] parts = option.split("\\s+");
         processGameChoice(parts);
 
@@ -27,13 +28,13 @@ public class ConsolePostLogin {
             case "create":
                 serverClient.create(option);
             case "list":
-                System.out.print("");
+                serverClient.list();
             case "join":
-                System.out.print("");
+                serverClient.join(option);
             case "observe":
-                System.out.print("");
+                serverClient.join(option);
             case "logout":
-                System.out.print("");
+                serverClient.logout(option);
             case "quit":
                 System.out.print("");
             case "help":
