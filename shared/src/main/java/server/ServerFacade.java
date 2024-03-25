@@ -40,10 +40,10 @@ public class ServerFacade {
     }
     public Game[] list() throws ResponseException {
         var path = "/game";
-        record listGameResponse(Game[] game) {
+        record listGameResponse(Game[] games) {
         }
         var response = this.makeRequest("GET", path, null, listGameResponse.class);
-        return response.game();
+        return response.games();
     }
 
     public void join(Game message) throws ResponseException {
@@ -60,8 +60,9 @@ public class ServerFacade {
                 http.setRequestProperty("Authorization", auth.getToken());
             }
             http.setDoOutput(true);
-
-            writeBody(request, http);
+            if (!(method.equals("GET"))) {
+                writeBody(request, http);
+            }
             http.connect();
 //            throwIfNotSuccessful(http);
             return readBody(http, responseClass);

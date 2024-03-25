@@ -39,6 +39,13 @@ public class ServerFacadeTests {
         gameAccess.clearAllGames();
     }
 
+    @BeforeEach
+    public void start() throws DataAccessException {
+        userAccess.clearAllUsers();
+        authAccess.clearAllAuth();
+        gameAccess.clearAllGames();
+    }
+
     @AfterAll
     static void stopServer() throws DataAccessException {
         server.stop();

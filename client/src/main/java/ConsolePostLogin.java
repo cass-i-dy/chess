@@ -29,12 +29,14 @@ public class ConsolePostLogin {
                 serverClient.create(option);
                 gameDisplay();
             case "list":
-                serverClient.list();
+                System.out.println(serverClient.list());
                 gameDisplay();
             case "join":
                 serverClient.join(option);
+                ConsoleGame.start();
             case "observe":
                 serverClient.join(option);
+                ConsoleGame.start();
             case "logout":
                 serverClient.logout(option);
                 ConsolePreLogin.loginDisplay();
