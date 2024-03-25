@@ -15,11 +15,7 @@ public class ConsolePreLogin {
 
 
     public static void loginDisplay() throws ResponseException {
-//        System.out.println("register <username> <password> <email>" );
-//        System.out.println("login <username> <password>" );
-//        System.out.println("quit" );
-//        System.out.println("help" );
-//        System.out.println("Option: ");
+        System.out.println("type help to see login options");
         String option = scanner.nextLine();
         String[] parts = option.split("\\s+");
         processLoginChoice(parts);
@@ -29,14 +25,18 @@ public class ConsolePreLogin {
         switch (choice[0].toLowerCase()) {
             case "register":
                 serverClient.register(choice);
+                System.out.println("Register Successful");
+                System.out.println("in game menu");
                 ConsolePostLogin.start(serverClient);
             case "login":
                 serverClient.login(choice);
+                System.out.println("Register Successful");
+                System.out.println("in game menu");
                 ConsolePostLogin.start(serverClient);
             case "quit":
                 break;
             case "help":
-                System.out.println(serverClient.help());
+                System.out.println(serverClient.help(true));
                 loginDisplay();
             case "game":
                 ConsoleGame.main(choice);

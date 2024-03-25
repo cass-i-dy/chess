@@ -16,31 +16,28 @@ import java.net.URL;
 
 public class ServerFacade {
 
+    public AuthToken auth = null;
     public String serverUrl;
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
-    public AuthToken register(User message) throws ResponseException {
+    public void register(User message) throws ResponseException {
         var path = "/user";
-        return this.makeRequest("POST", path, message, AuthToken.class);
+        auth =  this.makeRequest("POST", path, message, AuthToken.class);
     }
-    public AuthToken login(User message) throws ResponseException {
+    public void login(User message) throws ResponseException {
         var path = "/session";
-        return this.makeRequest("POST", path, message, AuthToken.class);
+        auth =  this.makeRequest("POST", path, message, AuthToken.class);
     }
-
-
-    public Object logout(String message) throws ResponseException {
+    public void logout() throws ResponseException {
         var path = "/session";
-        return this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null);
     }
-
     public Game create(Game message) throws ResponseException {
         var path = "/game";
         return this.makeRequest("GET", path, message, Game.class);
     }
-
     public Game[] list() throws ResponseException {
         var path = "/game";
         record listGameResponse(Game[] game) {
@@ -59,7 +56,9 @@ public class ServerFacade {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-//            http.setRequestProperty("Authorization", authToken);
+            if (!(auth==null)) {
+                http.setRequestProperty("Authorization", auth.getToken());
+            }
             http.setDoOutput(true);
 
             writeBody(request, http);

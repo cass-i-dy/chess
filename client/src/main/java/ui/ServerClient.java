@@ -14,53 +14,50 @@ public class ServerClient {
 
     private final String serverUrl;
 
-    private AuthToken auth = null;
-
 
 
     public ServerClient(String serverUrl) {
         serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        this.auth = null;
     }
 
-    public String eval(String input) {
-        try {
-            var tokens = input.toLowerCase().split(" ");
-            var cmd = (tokens.length > 0) ? tokens[0] : "help";
-            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "login" -> login(params);
+//    public String eval(String input) {
+//        try {
+//            var tokens = input.toLowerCase().split(" ");
+//            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+//            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+//            return switch (cmd) {
+//                case "login" -> login(params);
 //                case "register"->register(params);
-                case "logout"->logout(params);
-                default -> help();
-            };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
-        }
-    }
+//                case "logout"->logout(params);
+//                default -> help();
+//            };
+//        } catch (ResponseException ex) {
+//            return ex.getMessage();
+//        }
+//    }
 
     public void register(String... params) throws ResponseException {
         if (params.length >= 3) {
             User user = new User(params[1], params[2], params[3]);
-            this.auth = serverFacade.register(user);
+            serverFacade.register(user);
         }
         else {
             throw new ResponseException(400, "Expected: <yourname>");
         }
     }
 
-    public String login(String... params) throws ResponseException {
+    public void login(String... params) throws ResponseException {
         if (params.length >= 2) {
             User user = new User(params[1], params[2], null);
-            return String.valueOf(serverFacade.login(user));
+            serverFacade.login(user);
         }
         throw new ResponseException(400, "Expected: <yourname>");
     }
 
-    public String logout(String... params) throws ResponseException {
+    public void logout(String... params) throws ResponseException {
         if (params.length >= 1) {
-            return serverFacade.logout(Arrays.toString(params)).toString();
+            serverFacade.logout();
         }
         throw new ResponseException(400, "Expected");
     }
@@ -101,8 +98,8 @@ public class ServerClient {
 
 
 
-    public String help() {
-        if (auth == null) {
+    public String help(Boolean login) {
+        if (login) {
             return """
                     - Register <username> <password> <email>
                     - login <username> <password>

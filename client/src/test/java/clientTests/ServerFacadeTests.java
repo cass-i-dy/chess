@@ -51,6 +51,7 @@ public class ServerFacadeTests {
     }
 
     User testUser = new User("username", "password", "email");
+    Game testGame = new Game("Spaced Out", null, null, null);
 
 
     @Test
@@ -71,4 +72,21 @@ public class ServerFacadeTests {
     void testLoginFail() {
         Assertions.assertThrows(ResponseException.class,()-> serverFacade.login(testUser));
     }
+
+    @Test
+    @DisplayName("Test Logout")
+    void testLogoutPass() {
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertDoesNotThrow(()->serverFacade.logout());
+    }
+
+    @Test
+    @DisplayName("Test Create Game")
+    void testCreatePass() {
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
+    }
+
+
+
 }

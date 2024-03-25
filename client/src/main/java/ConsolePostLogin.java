@@ -38,7 +38,7 @@ public class ConsolePostLogin {
             case "quit":
                 System.out.print("");
             case "help":
-                System.out.print("");
+                serverClient.help(false);
             default:
                 System.out.print("Invalid Option");
 
