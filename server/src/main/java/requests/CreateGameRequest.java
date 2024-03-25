@@ -3,6 +3,11 @@ package requests;
 public class CreateGameRequest {
     String authToken;
     String gameName;
+
+    String whiteUsername;
+
+    String blackUsername;
+
     public String getGameName(){
         return gameName;
     }

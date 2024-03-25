@@ -37,22 +37,31 @@ public class ServerClient {
 //        }
 //    }
 
-    public void register(String... params) throws ResponseException {
+    public Boolean register(String... params) throws ResponseException {
         if (params.length >= 3) {
             User user = new User(params[1], params[2], params[3]);
             serverFacade.register(user);
+            System.out.println("Register Successful");
+            return true;
+
         }
         else {
-            throw new ResponseException(400, "Expected: <yourname>");
+            System.out.println("register <username> <password> <email>");
+            return false;
         }
     }
 
-    public void login(String... params) throws ResponseException {
+    public Boolean login(String... params) throws ResponseException {
         if (params.length >= 2) {
             User user = new User(params[1], params[2], null);
             serverFacade.login(user);
+            System.out.println("Login Successful");
+            return true;
         }
-        throw new ResponseException(400, "Expected: <yourname>");
+        else {
+            System.out.println("login <username> <password>");
+            return false;
+        }
     }
 
     public void logout(String... params) throws ResponseException {
@@ -63,9 +72,13 @@ public class ServerClient {
     }
 
     public void create(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length >= 2) {
             Game game = new Game (params[1], null, null, null);
             serverFacade.create(game);
+            System.out.println("Game Created");
+        }
+        else {
+            System.out.println("create <gamename>");
         }
     }
 
@@ -83,17 +96,26 @@ public class ServerClient {
         if (params.length == 1) {
                 Game game = new Game(null, params[1], null, null);
                 serverFacade.join(game);
+                System.out.println("observing game");
             }
-        else {
-            if (params[2].equals("WHITE")) {
-                Game game = new Game(null, params[1], params[2], null );
+        else if (params.length > 1) {
+            if (params[2].toUpperCase().equals("WHITE")) {
+                Game game = new Game(null, params[1], params[2], null);
+                game.setPlayerColor("WHITE");
                 serverFacade.join(game);
+                System.out.println("Joined Game");
             }
-            if (params[2].equals("BLACK")) {
+            if (params[2].toUpperCase().equals("BLACK")) {
                 Game game = new Game(null, params[1], null, params[2]);
+                game.setPlayerColor("BLACK");
                 serverFacade.join(game);
+                System.out.println("Joined Game");
             }
         }
+        else {
+            System.out.println("join <gameID> <white|black|empty>");
+        }
+
     }
 
 

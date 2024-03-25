@@ -24,15 +24,15 @@ public class ConsolePreLogin {
     public static void processLoginChoice(String[] choice) throws ResponseException {
         switch (choice[0].toLowerCase()) {
             case "register":
-                serverClient.register(choice);
-                System.out.println("Register Successful");
-                System.out.println("in game menu");
-                ConsolePostLogin.start(serverClient);
+                if (serverClient.register(choice)){
+                    System.out.println("In Game Menu");
+                    ConsolePostLogin.start(serverClient);}
+                else{loginDisplay();}
             case "login":
-                serverClient.login(choice);
-                System.out.println("Register Successful");
-                System.out.println("in game menu");
-                ConsolePostLogin.start(serverClient);
+                if (serverClient.login(choice)) {
+                System.out.println("In Game Menu");
+                ConsolePostLogin.start(serverClient);}
+                else{loginDisplay();}
             case "quit":
                 break;
             case "help":

@@ -5,13 +5,19 @@ public class Game {
     String gameID;
     String whiteUsername;
     String blackUsername;
+    String playerColor;
 
     public Game(String gameName, String gameID, String whiteUsername, String blackUsername){
         this.gameName = gameName;
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
+        this.playerColor = null;
 
+    }
+
+    public void setPlayerColor(String color) {
+        playerColor = color;
     }
 
     public String getName(){

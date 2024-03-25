@@ -5,6 +5,10 @@ public class JoinGameRequest {
     String gameID;
     String authToken;
 
+    String whiteUsername;
+
+    String blackUsername;
+
     public JoinGameRequest(String playerColor, String gameID){
         this.playerColor = playerColor;
         this.gameID = gameID;

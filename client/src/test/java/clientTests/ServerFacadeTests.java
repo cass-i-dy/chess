@@ -40,8 +40,11 @@ public class ServerFacadeTests {
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws DataAccessException {
         server.stop();
+        userAccess.clearAllUsers();
+        authAccess.clearAllAuth();
+        gameAccess.clearAllGames();
     }
 
 
@@ -87,6 +90,13 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
     }
 
+    @Test
+    @DisplayName("Test List Games")
+    void testListGames() {
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
+        Assertions.assertDoesNotThrow(()->serverFacade.list());
+    }
 
 
 }
