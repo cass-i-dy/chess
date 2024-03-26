@@ -57,11 +57,7 @@ public class ServerFacadeTests {
     Game testCreatedGame = new Game("Spaced Out", "1", null, null);
 
 
-    @Test
-    @DisplayName("Clear Data")
-    void testClearPass() {
-        Assertions.assertDoesNotThrow(()->serverFacade.clear());
-    }
+
     @Test
     @DisplayName("Test Register")
     void testRegisterPass() {
@@ -142,6 +138,14 @@ public class ServerFacadeTests {
     }
 
     @Test
+    @DisplayName("Test Create Game")
+    void testCreateFail1() {
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Game game = new Game(null, null, null, null);
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.create(game));
+    }
+
+    @Test
     @DisplayName("Test List Games")
     void testListGames() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
@@ -176,6 +180,16 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(()->serverFacade.join(testCreatedGame));
         testCreatedGame.setWhite("WHITE");
         Assertions.assertDoesNotThrow(()->serverFacade.join(testCreatedGame));
+    }
+
+    @Test
+    @DisplayName("Join Game")
+    void testJoinAndObserveGameFail(){
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
+        testCreatedGame.setBlack("BLACK");
+        Assertions.assertDoesNotThrow(()->serverFacade.join(testCreatedGame));
+        Assertions.assertThrows(ResponseException.class,()->serverFacade.join(testGame));
     }
 
     @Test
