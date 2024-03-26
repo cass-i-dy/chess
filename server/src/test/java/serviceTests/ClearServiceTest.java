@@ -33,7 +33,7 @@ public class ClearServiceTest {
     @DisplayName("ClearAll Success")
     void testClearAllPass() {
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 

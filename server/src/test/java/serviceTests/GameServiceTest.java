@@ -26,7 +26,7 @@ public class GameServiceTest {
     @DisplayName("CreateGame Success")
     void testCreateGamePass(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -41,7 +41,7 @@ public class GameServiceTest {
     @DisplayName("CreateGame Fail")
     void testCreateGameFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -56,7 +56,7 @@ public class GameServiceTest {
     @DisplayName("CreateGame Fail")
     void testCreateGameAuthFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -71,7 +71,7 @@ public class GameServiceTest {
     @DisplayName("JoinGame Success")
     void testJoinGamePass(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -94,7 +94,7 @@ public class GameServiceTest {
     @DisplayName("JoinGame Fail")
     void testJoinGameFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -115,7 +115,7 @@ public class GameServiceTest {
     @DisplayName("JoinGame Fail")
     void testJoinGameWatch(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -134,7 +134,7 @@ public class GameServiceTest {
     @DisplayName("JoinGame Fail")
     void testJoinAuthFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -154,7 +154,7 @@ public class GameServiceTest {
     @DisplayName("JoinGame Fail")
     void testJoinGameWhileFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -175,7 +175,7 @@ public class GameServiceTest {
     @DisplayName("ListGame Success")
     void testListGamePass(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -201,7 +201,7 @@ public class GameServiceTest {
     @DisplayName("ListGame Fail")
     void testListGameAuthFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 

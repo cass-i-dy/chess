@@ -1,17 +1,17 @@
 package model;
 
 public class User {
-    private String userName;
+    private String username;
     private String password;
     private String email;
 
-    public User(String userName, String password, String email){
-        this.userName = userName;
+    public User(String username, String password, String email){
+        this.username = username;
         this.password = password;
         this.email = email;
     }
     public String getName() {
-        return userName;
+        return username;
     }
     public String getPassword() {
         return password;

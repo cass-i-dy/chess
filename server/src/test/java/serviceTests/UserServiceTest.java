@@ -26,7 +26,7 @@ public class UserServiceTest {
     @DisplayName("Register Success")
     void testRegisterPass(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -41,7 +41,7 @@ public class UserServiceTest {
     @DisplayName("Register Failed")
     void testRegisterUserNameFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -54,7 +54,7 @@ public class UserServiceTest {
     @DisplayName("Register Failed")
     void testRegisterEmptyPasswordFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setEmail(testUser.getEmail());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
@@ -64,7 +64,7 @@ public class UserServiceTest {
     @DisplayName("Register Failed")
     void testRegisterEmptyEmailFail(){
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.createUser(request));
@@ -84,11 +84,11 @@ public class UserServiceTest {
     @DisplayName("Login Success")
     void testLoginPass() {
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUserName(testUser.getName());
+        loginRequest.setUsername(testUser.getName());
         loginRequest.setPassword(testUser.getPassword());
 
         Assertions.assertDoesNotThrow(() -> userService.createUser(request));
@@ -100,7 +100,7 @@ public class UserServiceTest {
     @DisplayName("Login Failed")
     void testLoginFail() {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUserName(testUser.getName());
+        loginRequest.setUsername(testUser.getName());
         loginRequest.setPassword(testUser.getPassword());
 
         Assertions.assertThrows(DataAccessException.class, ()->userService.findLogin(loginRequest));
@@ -110,11 +110,11 @@ public class UserServiceTest {
     @DisplayName("Login Failed")
     void testLoginEmptyFail() {
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUserName(testUser.getName());
+        loginRequest.setUsername(testUser.getName());
         loginRequest.setPassword("ooooo");
 
         Assertions.assertDoesNotThrow(() -> userService.createUser(request));
@@ -126,7 +126,7 @@ public class UserServiceTest {
     @DisplayName("Logout Success")
     void testLogoutPass() {
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
@@ -141,7 +141,7 @@ public class UserServiceTest {
     @DisplayName("Logout Failed")
     void testLogoutFail() {
         RegisterRequest request = new RegisterRequest();
-        request.setUserName(testUser.getName());
+        request.setUsername(testUser.getName());
         request.setUserPassword(testUser.getPassword());
         request.setEmail(testUser.getEmail());
 
