@@ -26,14 +26,16 @@ public class ConsoleGame {
     private static Boolean reversed = true;
 
     public static void start() throws ResponseException {
-        System.out.println("Type 'start' to start game, else type 'quit'");
+        System.out.println("Type 'start' to start game");
         String option = ConsolePostLogin.scanner.nextLine();
         String[] parts = option.split("\\s+");
-        if (parts[0].toLowerCase().equals("quit")){
+        if (parts.length >= 1){
+            main(parts);
+            System.out.println("In Game Menu");
             ConsolePostLogin.gameDisplay();
         }
         else{
-            main(parts);
+            start();
         }
     }
 
@@ -57,6 +59,7 @@ public class ConsoleGame {
         drawChessBoard(out);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
+        setDark(out);
     }
 
     private static void drawHeaders(PrintStream out) {
@@ -260,6 +263,11 @@ public class ConsoleGame {
     private static void setDarkGrey(PrintStream out) {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_DARK_GREY);
+    }
+
+    private static void setDark(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void printBlackPlayer(PrintStream out, String player) {

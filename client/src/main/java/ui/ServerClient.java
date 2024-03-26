@@ -39,10 +39,16 @@ public class ServerClient {
 
     public Boolean register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            User user = new User(params[1], params[2], params[3]);
-            serverFacade.register(user);
-            System.out.println("Register Successful");
-            return true;
+            try {
+                User user = new User(params[1], params[2], params[3]);
+                serverFacade.register(user);
+                System.out.println("Register Successful");
+                return true;
+            }
+            catch (ResponseException e){
+                System.out.println("Already Registered");
+                return false;
+            }
 
         }
         else {
@@ -51,12 +57,18 @@ public class ServerClient {
         }
     }
 
-    public Boolean login(String... params) throws ResponseException {
+    public Boolean login(String... params) {
         if (params.length >= 2) {
             User user = new User(params[1], params[2], null);
-            serverFacade.login(user);
-            System.out.println("Login Successful");
-            return true;
+            try {
+                serverFacade.login(user);
+                System.out.println("Login Successful");
+                return true;
+            }
+            catch (ResponseException e){
+                System.out.println("incorrect login");
+                return false;
+            }
         }
         else {
             System.out.println("login <username> <password>");
@@ -70,17 +82,19 @@ public class ServerClient {
         }
     }
 
-    public void clear(String... params) throws ResponseException {
-        if (params.length >= 1) {
+    public void clear() throws ResponseException {
             serverFacade.clear();
-        }
     }
 
     public void create(String... params) throws ResponseException {
         if (params.length >= 2) {
+            try {
             Game game = new Game (params[1], null, null, null);
             serverFacade.create(game);
-            System.out.println("Game Created");
+            System.out.println("Game Created");}
+            catch (ResponseException e){
+                System.out.println("Game already created");
+            }
         }
         else {
             System.out.println("create <gamename>");
@@ -94,35 +108,48 @@ public class ServerClient {
         for (var game: games) {
             result.append(gson.toJson(game)).append('\n');
         }
+        System.out.println("Game List:");
         return result.toString();
     }
 
-    public void join(String... params) throws ResponseException {
-        if (params.length == 2) {
-                Game game = new Game(null, params[1], null, null);
-                serverFacade.join(game);
-                System.out.println("observing game");
-            }
-        else if (params.length > 2) {
-            if (params[2].toUpperCase().equals("WHITE")) {
-                Game game = new Game(null, params[1], params[2], null);
-                game.setPlayerColor("WHITE");
-                serverFacade.join(game);
-                System.out.println("Joined Game");
-            }
-            if (params[2].toUpperCase().equals("BLACK")) {
-                Game game = new Game(null, params[1], null, params[2]);
-                game.setPlayerColor("BLACK");
-                serverFacade.join(game);
-                System.out.println("Joined Game");
-            }
-        }
-        else {
+    public Boolean join(String... params) {
+        if (params.length < 2) {
             System.out.println("join <gameID> <white|black|empty>");
+            return false;
         }
-
+        Game game = new Game(null, params[1], null, null);
+        try {
+            serverFacade.join(game);
+        } catch (ResponseException e) {
+            System.out.println("invalid gameid");
+            return false;
+        }
+        if (params.length == 2) {
+            System.out.println("observing game");
+            return true;
+        } else {
+            if (params[2].toUpperCase().equals("WHITE")) {
+                game.setPlayerColor("WHITE");
+                try {
+                    serverFacade.join(game);
+                    System.out.println("Joined Game");
+                } catch (ResponseException e) {
+                    System.out.println("white player already assigned");
+                    return false;
+                }
+            } else {
+                game.setPlayerColor("BLACK");
+                try {
+                    serverFacade.join(game);
+                    System.out.println("Joined Game");
+                } catch (ResponseException e) {
+                    System.out.println("black player already assigned");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
-
 
 
     public String help(Boolean login) {
@@ -139,7 +166,6 @@ public class ServerClient {
                 - join <gameid> <white|black|empty>
                 - observe <gameid>
                 - quit
-                - help
                 - logout
                 """;
     }

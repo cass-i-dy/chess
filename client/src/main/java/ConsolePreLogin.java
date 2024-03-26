@@ -28,18 +28,29 @@ public class ConsolePreLogin {
                     System.out.println("In Game Menu");
                     ConsolePostLogin.start(serverClient);}
                 else{loginDisplay();}
+                break;
             case "login":
                 if (serverClient.login(choice)) {
                 System.out.println("In Game Menu");
                 ConsolePostLogin.start(serverClient);}
                 else{loginDisplay();}
+                break;
             case "quit":
                 break;
             case "help":
                 System.out.println(serverClient.help(true));
                 loginDisplay();
+                break;
             case "game":
                 ConsoleGame.main(choice);
+                break;
+            case "clear":
+                serverClient.clear();
+                break;
+            default:
+                System.out.println("Invalid Command");
+                loginDisplay();
+                break;
 
         }
 

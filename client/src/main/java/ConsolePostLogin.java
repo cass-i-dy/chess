@@ -28,26 +28,29 @@ public class ConsolePostLogin {
             case "create":
                 serverClient.create(option);
                 gameDisplay();
+                break;
             case "list":
                 System.out.println(serverClient.list());
                 gameDisplay();
+                break;
             case "join":
-                serverClient.join(option);
-                ConsoleGame.start();
+                if(serverClient.join(option)){
+                ConsoleGame.start();}
+                else{gameDisplay();}
+                break;
             case "observe":
-                serverClient.join(option);
-                ConsoleGame.start();
+                if(serverClient.join(option)){
+                ConsoleGame.start();}
+                else{gameDisplay();}
+                break;
             case "logout":
                 serverClient.logout(option);
                 ConsolePreLogin.loginDisplay();
-            case "quit":
-                System.out.print("");
                 break;
             case "help":
                 System.out.println(serverClient.help(false));
                 gameDisplay();
-            case "clear":
-                serverClient.clear();
+                break;
             default:
                 System.out.print("Invalid Option");
 
