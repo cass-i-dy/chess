@@ -206,7 +206,6 @@ public class Server {
             return "{}";
         }
         catch (DataAccessException e) {
-            e.printStackTrace();
                 res.status(500);
                 return new Gson().toJson(Map.of("message", e.getMessage()));
         }

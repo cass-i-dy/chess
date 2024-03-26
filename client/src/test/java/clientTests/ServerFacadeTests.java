@@ -53,27 +53,27 @@ public class ServerFacadeTests {
 
 
     @Test
-    @DisplayName("Test Register")
+    @DisplayName("Test Register Pass")
     void testRegisterPass() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
     }
 
     @Test
-    @DisplayName("Test Register")
+    @DisplayName("Test Register Fail")
     void testRegisterFail(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertThrows(ResponseException.class, ()->serverFacade.register(testUser));
     }
 
     @Test
-    @DisplayName("Test Logout")
+    @DisplayName("Test Logout1 Pass")
     void testLogoutPass1() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
     }
 
     @Test
-    @DisplayName("Test Login")
+    @DisplayName("Test Login Pass")
     void testLoginPass() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
@@ -81,7 +81,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Test Login")
+    @DisplayName("Test Login Fail1")
     void testLoginFail1() {
 
         Assertions.assertThrows(ResponseException.class,()->serverFacade.logout());
@@ -90,13 +90,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Test Login")
+    @DisplayName("Test Login Fail")
     void testLoginFail() {
         Assertions.assertThrows(ResponseException.class,()-> serverFacade.login(testUser));
     }
 
     @Test
-    @DisplayName("Test Logout")
+    @DisplayName("Test Logout Pass")
     void testLogoutPass() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
@@ -105,7 +105,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Test Logout")
+    @DisplayName("Test Logout Fail")
     void testLogoutFail() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
@@ -117,14 +117,14 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Test Create Game")
+    @DisplayName("Test Create Game Pass")
     void testCreatePass() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
     }
 
     @Test
-    @DisplayName("Test Create Game")
+    @DisplayName("Test Create Game Fail")
     void testCreateFail() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -132,7 +132,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Test Create Game")
+    @DisplayName("Test Create Game Fail1")
     void testCreateFail1() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Game game = new Game(null, null, null, null);
@@ -148,7 +148,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Join Game")
+    @DisplayName("Join Game White")
         void testJoinWhiteGame(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -157,7 +157,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Join Game")
+    @DisplayName("Join Game Black")
     void testJoinBlackGame(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -166,7 +166,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Join Game")
+    @DisplayName("Join Game Both")
     void testJoinBothGame(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -177,7 +177,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Join Game")
+    @DisplayName("Join and Observe Game Fail")
     void testJoinAndObserveGameFail(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -187,7 +187,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Observe Game")
+    @DisplayName("Observe Empty Game ")
     void testJoinObserveEmptyGame(){
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -195,7 +195,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Fail Join Game")
+    @DisplayName("Fail Join White Game")
     void failJoinWhiteGame() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
@@ -206,7 +206,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Fail Join Game")
+    @DisplayName("Fail Join Black Game")
     void failJoinBlackGame() {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
         Assertions.assertDoesNotThrow(()->serverFacade.create(testGame));
