@@ -68,6 +68,12 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
     }
 
+    @Test
+    @DisplayName("Test Register")
+    void testRegisterFail(){
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.register(testUser));
+    }
 
     @Test
     @DisplayName("Test Logout")
@@ -86,6 +92,15 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Test Login")
+    void testLoginFail1() {
+
+        Assertions.assertThrows(ResponseException.class,()->serverFacade.logout());
+
+
+    }
+
+    @Test
+    @DisplayName("Test Login")
     void testLoginFail() {
         Assertions.assertThrows(ResponseException.class,()-> serverFacade.login(testUser));
     }
@@ -97,6 +112,18 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
         Assertions.assertDoesNotThrow(()->serverFacade.login(testUserLogin));
         Assertions.assertDoesNotThrow(()->serverFacade.logout());
+    }
+
+    @Test
+    @DisplayName("Test Logout")
+    void testLogoutFail() {
+        Assertions.assertDoesNotThrow(()->serverFacade.register(testUser));
+        Assertions.assertDoesNotThrow(()->serverFacade.logout());
+        Assertions.assertDoesNotThrow(()->serverFacade.login(testUserLogin));
+        Assertions.assertDoesNotThrow(()->serverFacade.logout());
+        Assertions.assertThrows(ResponseException.class, ()->serverFacade.logout());
+
+
     }
 
     @Test
