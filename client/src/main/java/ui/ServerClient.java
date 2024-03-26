@@ -68,7 +68,12 @@ public class ServerClient {
         if (params.length >= 1) {
             serverFacade.logout();
         }
-        throw new ResponseException(400, "Expected");
+    }
+
+    public void clear(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            serverFacade.clear();
+        }
     }
 
     public void create(String... params) throws ResponseException {
@@ -93,12 +98,12 @@ public class ServerClient {
     }
 
     public void join(String... params) throws ResponseException {
-        if (params.length == 1) {
+        if (params.length == 2) {
                 Game game = new Game(null, params[1], null, null);
                 serverFacade.join(game);
                 System.out.println("observing game");
             }
-        else if (params.length > 1) {
+        else if (params.length > 2) {
             if (params[2].toUpperCase().equals("WHITE")) {
                 Game game = new Game(null, params[1], params[2], null);
                 game.setPlayerColor("WHITE");

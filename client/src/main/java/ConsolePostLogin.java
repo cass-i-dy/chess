@@ -46,6 +46,8 @@ public class ConsolePostLogin {
             case "help":
                 System.out.println(serverClient.help(false));
                 gameDisplay();
+            case "clear":
+                serverClient.clear();
             default:
                 System.out.print("Invalid Option");
 

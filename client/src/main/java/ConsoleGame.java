@@ -26,6 +26,7 @@ public class ConsoleGame {
     private static Boolean reversed = true;
 
     public static void start() throws ResponseException {
+        System.out.println("Type 'start' to start game, else type 'quit'");
         String option = ConsolePostLogin.scanner.nextLine();
         String[] parts = option.split("\\s+");
         if (parts[0].toLowerCase().equals("quit")){
