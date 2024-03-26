@@ -2,18 +2,13 @@ package clientTests;
 
 import dataAccess.*;
 import exception.ResponseException;
-import model.AuthToken;
 import model.Game;
 import model.User;
 import org.junit.jupiter.api.*;
-import requests.CreateGameRequest;
-import requests.JoinGameRequest;
-import requests.ListGamesRequest;
-import requests.RegisterRequest;
+
 import server.Server;
 import server.ServerFacade;
-import service.ClearService;
-import ui.ServerClient;
+
 
 
 public class ServerFacadeTests {
@@ -55,7 +50,6 @@ public class ServerFacadeTests {
     Game testGame = new Game("Spaced Out", null, null, null);
 
     Game testCreatedGame = new Game("Spaced Out", "1", null, null);
-
 
 
     @Test
