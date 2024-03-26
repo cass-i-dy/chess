@@ -153,6 +153,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
 
     @Override
     public void clearAllGames() throws DataAccessException {
+        configureDatabase(createStatements);
         countGameID = 1;
         var statement = "TRUNCATE TABLE games";
         executeUpdate(statement);

@@ -72,6 +72,7 @@ public class MySQLDataAccessAuth extends MySQLDataAccess implements DataAccessAu
 
     @Override
     public void clearAllAuth() throws DataAccessException {
+        configureDatabase(createStatements);
         var statement = "TRUNCATE TABLE authtokens";
         executeUpdate(statement);
 
