@@ -1,6 +1,6 @@
 package clientTests;
 
-import dataAccess.*;
+
 import exception.ResponseException;
 import model.Game;
 import model.User;
@@ -20,7 +20,7 @@ public class ServerFacadeTests {
 
 
     @BeforeAll
-    public static void init() throws DataAccessException {
+    public static void init() {
         server = new Server();
         var port = server.run(0);
         serverFacade = new ServerFacade("http://localhost:"+ port);
@@ -29,7 +29,7 @@ public class ServerFacadeTests {
 
 
     @AfterAll
-    static void stopServer() throws DataAccessException {
+    static void stopServer() {
         server.stop();
     }
 
