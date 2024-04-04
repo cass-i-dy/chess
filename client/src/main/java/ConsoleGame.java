@@ -2,255 +2,169 @@ import exception.ResponseException;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.Collections;
+
+import chess.*;
 
 import static ui.EscapeSequences.*;
 
 public class ConsoleGame {
-    private static final int BOARD_SIZE_IN_SQUARES = 4;
-    private static final int SQUARE_SIZE_IN_CHARS = 1;
-    private final int LINE_WIDTH_IN_CHARS = 1;
-    private static final String EMPTY = "  ";
-    private final String PAWN = " P ";
-    private final String ROOK = " R ";
-    private final String BISHOP = " B ";
-    private final String KNIGHT = " N ";
-    private final String QUEEN = " Q ";
-    private final String KING = " K ";
-    private static final String[] funPieces = {"R", "N", "B", "K", "Q", "B", "N", "R"};
-    private final String[] pawns = {"P", "P", "P", "P", "P", "P", "P", "P" };
-    private final String[] numbersList = {"1", "2", "3", "4", "5", "6", "7", "8"};
-    private static int counter = 0;
-    private static Boolean reversed = true;
 
-    public static void start() throws ResponseException {
+    private static String EMPTY = "  ";
+
+    public static Boolean reversed = false;
+
+    public static Boolean print_white = true;
+
+    private static final int SQUARE_SIZE_IN_CHARS = 1;
+
+    private static ChessBoard board;
+
+
+    public static void start(String color) throws ResponseException {
+        if (color.equalsIgnoreCase("BLACK")){
+            reversed = true;
+        }
         System.out.println("Type 'start' to start game");
         String option = ConsolePostLogin.scanner.nextLine();
         String[] parts = option.split("\\s+");
-        if (parts.length >= 1){
-            main(parts);
-            System.out.println("In Game Menu");
-            ConsolePostLogin.gameDisplay();
-        }
-        else{
-            start();
-        }
+        main(parts, color);
+        System.out.println("In Game Menu");
+        ConsolePostLogin.gameDisplay();
     }
 
-
-
-
-    public static void main(String[] args) {
+    public static void main(String[] args, String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
+        board = new ChessBoard();
+        board.resetBoard();
         out.print(ERASE_SCREEN);
 
         drawHeaders(out);
-
         drawChessBoard(out);
 
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
 
-        drawHeaders(out);
-        reversed = false;
-        drawChessBoard(out);
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
-        setDark(out);
+
     }
 
-    private static void drawHeaders(PrintStream out) {
-        setBlack(out);
 
-        String[] letter_headers = {" ", "a", "b", "c", "d", "e", "f", "g", "h"};
-        for (int boardCol = 0; boardCol < 9; ++boardCol) {
-//            drawVerticalHeader(out, number_headers[boardCol]);
+    public static void drawHeaders(PrintStream out) {
+
+        String[] letter_headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        if (reversed){
+            Collections.reverse(Arrays.asList(letter_headers));
+        }
+        drawHeader(out, " ");
+        for (int boardCol = 0; boardCol < 8; ++boardCol) {
             drawHeader(out, letter_headers[boardCol]);
         }
-
-//        String[] number_headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
-//        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-//            drawHeader(out, number_headers[boardCol]);
-//        }
         setDarkGrey(out);
         out.println();
     }
 
-    private static void drawHeader(PrintStream out, String headerText) {
-        int suffixLength;
+    public static void drawHeader(PrintStream out, String headerText) {
         int prefixLength;
-//        suffixLength = 1;
         prefixLength = 1;
-//        if (number/2 == 0) {
-//            suffixLength = 2;
-//            prefixLength = 2;
-//        }
-//        else{
-//            suffixLength = 2;
-//            prefixLength = 2;
-//        }
         out.print(EMPTY.repeat(prefixLength));
         printHeaderText(out, headerText);
-//        out.print(EMPTY.repeat(suffixLength));
-
     }
 
-    private static void printHeaderText(PrintStream out, String player) {
+
+    public static void printHeaderText(PrintStream out, String player) {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_GREEN);
-
         out.print(player);
-
         setDarkGrey(out);
+    }
+    public static void setDarkGrey(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
     private static void drawChessBoard(PrintStream out) {
-        if (reversed){
-        createHalfBoard(out, false, false);
-        createHalfBoard(out, true, true);}
-        else{
-            createHalfBoard(out, true, false);
-            createHalfBoard(out, false, true);
-        }
-
-    }
-
-    public static void createHalfBoard(PrintStream out, Boolean count, Boolean bottom){
-        Boolean off = true;
-
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
-            if (count) {
-                String number = String.valueOf(boardRow+5);
-                drawHeader(out, number);
+        for (int boardRow = 0; boardRow < 8; ++boardRow){
+            colNumbers(out, boardRow);
+            for (int boardCol = 0; boardCol < 8; ++boardCol) {
+                printSquare(out, boardRow, boardCol);
             }
-            else {
-                String number = String.valueOf(boardRow+1);
-                drawHeader(out, number);
-
-            }
-
-            drawRowOfSquares(out, off, boardRow, bottom);
-
-            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-                off = !off;
-            }
-        }
-        counter = 0;
-    }
-
-    private static void checkPlayer(int index, PrintStream out, Boolean bottom) {
-        if (reversed) {
-            if (bottom) {
-                if (index == 3) {
-                    printWhitePlayer(out, funPieces[counter]);
-                    counter += 1;
-                } else if (index == 2) {
-                    printWhitePlayer(out, "P");
-                } else {
-                    printWhitePlayer(out, " ");
-                }
-            } else {
-                if (index == 0) {
-                    printBlackPlayer(out, funPieces[counter]);
-                    counter += 1;
-                } else if (index == 1) {
-                    printBlackPlayer(out, "P");
-                } else {
-                    printBlackPlayer(out, " ");
-                }
-            }
-        }
-        else{
-            if (bottom) {
-                if (index == 3) {
-                    printBlackPlayer(out, funPieces[counter]);
-                    counter += 1;
-                } else if (index == 2) {
-                    printBlackPlayer(out, "P");
-                } else {
-                    printBlackPlayer(out, " ");
-                }
-            } else {
-                if (index == 0) {
-                    printWhitePlayer(out, funPieces[counter]);
-                    counter += 1;
-                } else if (index == 1) {
-                    printWhitePlayer(out, "P");
-                } else {
-                    printWhitePlayer(out, " ");
-                }
-            }
-        }
-    }
-
-    private static void drawRowOfSquares(PrintStream out, Boolean off, int row, Boolean bottom) {
-
-        for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
-            if (!(squareRow == 0)) {
-                drawHeader(out, " ");
-            }
-            for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-//                if (squareRow == SQUARE_SIZE_IN_CHARS / 2) {
-//                    setBlack(out);
-//                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-//                    setWhite(out);
-//                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-//                }
-//                else {
-//                    setWhite(out);
-//                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-//                    setBlack(out);
-//                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-//                }
-                if (off) {
-                    out.print(SET_BG_COLOR_GREEN);
-                    checkPlayer(row, out, bottom);
-                    setWhite(out);
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-                    out.print(SET_BG_COLOR_BLACK);
-                    checkPlayer(row, out, bottom);
-                    setBlack(out);
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-                } else {
-                    out.print(SET_BG_COLOR_BLACK);
-                    checkPlayer(row, out, bottom);
-                    setBlack(out);
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-                    out.print(SET_BG_COLOR_GREEN);
-                    checkPlayer(row, out, bottom);
-                    setWhite(out);
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
-                }
-            }
-        }
             setDarkGrey(out);
             out.println();
-    }
-
-    private void drawVerticalLine(PrintStream out) {
-
-        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_CHARS +
-                (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_CHARS;
-
-        for (int lineRow = 0; lineRow < LINE_WIDTH_IN_CHARS; ++lineRow) {
-            setRed(out);
-            out.print(EMPTY.repeat(boardSizeInSpaces));
-
-            setBlack(out);
-            out.println();
+            print_white = !print_white;
         }
     }
 
-    private static void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_GREEN);
-        out.print(SET_TEXT_COLOR_GREEN);
+    private static void printSquare(PrintStream out, int row, int col){
+        if (print_white) {
+            out.print(SET_BG_COLOR_GREEN);
+            checkPiece(out, row, col);
+            setGreen(out);
+            print_white = false;
+
+        }
+        else {
+            out.print(SET_BG_COLOR_BLACK);
+            checkPiece(out, row, col);
+            setBlack(out);
+            print_white = true;
+        }
+        out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
     }
 
-    private void setRed(PrintStream out) {
-        out.print(SET_BG_COLOR_RED);
-        out.print(SET_TEXT_COLOR_RED);
+    private static void checkPiece(PrintStream out, int row, int col){
+        ChessPiece piece;
+        if (!reversed){
+            piece = board.getPiece(new ChessPosition(8-row, 8-col));
+
+        }
+        else {
+            piece = board.getPiece(new ChessPosition(row + 1, col + 1));
+        }
+        if (piece == null) {
+            printRedPlayer(out, " ");
+            return;
+        }
+        ChessPiece.PieceType type = piece.getPieceType();
+        String stringType = getStringType(type.name());
+        ChessGame.TeamColor color = piece.getTeamColor();
+        if (color == ChessGame.TeamColor.WHITE) {
+            printBluePlayer(out, stringType);
+        }
+        if (color == ChessGame.TeamColor.BLACK) {
+            printRedPlayer(out, stringType);
+        }
+    }
+
+    private static String getStringType(String type){
+        if (type.equals("KING")) {
+            return "K";
+        }
+        if (type.equals("QUEEN")) {
+            return "Q";
+        }
+        if (type.equals("KNIGHT")) {
+            return "N";
+        }
+        if (type.equals("BISHOP")) {
+            return "B";
+        }
+        if (type.equals("ROOK")) {
+            return "R";
+        }
+        if (type.equals("PAWN")) {
+            return "P";
+        }
+        return null;
+    }
+
+    private static void colNumbers(PrintStream out, int boardRow){
+        String number;
+        if (reversed) {
+            number = String.valueOf(8- boardRow);
+        }
+        else {
+            number = String.valueOf(boardRow + 1);
+        }
+        drawHeader(out, number);
     }
 
     private static void setBlack(PrintStream out) {
@@ -258,29 +172,21 @@ public class ConsoleGame {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    private static void setDarkGrey(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_DARK_GREY);
+    private static void setGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
+        out.print(SET_TEXT_COLOR_GREEN);
     }
 
-    private static void setDark(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void printBlackPlayer(PrintStream out, String player) {
+    private static void printRedPlayer(PrintStream out, String player) {
         out.print(SET_TEXT_COLOR_RED);
-
         out.print(player);
-
-        setWhite(out);
+        setGreen(out);
     }
 
-    private static void printWhitePlayer(PrintStream out, String player) {
+    private static void printBluePlayer(PrintStream out, String player) {
         out.print(SET_TEXT_COLOR_BLUE);
-
         out.print(player);
-
         setBlack(out);
     }
+
 }

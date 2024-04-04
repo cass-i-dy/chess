@@ -32,14 +32,9 @@ public class ConsolePostLogin {
                 System.out.println(serverClient.list());
                 gameDisplay();
                 break;
-            case "join":
+            case "join", "observe":
                 if(serverClient.join(option)){
-                ConsoleGame.start();}
-                else{gameDisplay();}
-                break;
-            case "observe":
-                if(serverClient.join(option)){
-                ConsoleGame.start();}
+                ConsoleGame.start(option[2]);}
                 else{gameDisplay();}
                 break;
             case "logout":

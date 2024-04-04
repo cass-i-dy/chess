@@ -1,5 +1,4 @@
 import exception.ResponseException;
-import server.ServerFacade;
 import ui.ServerClient;
 
 import java.util.Scanner;
@@ -42,7 +41,7 @@ public class ConsolePreLogin {
                 loginDisplay();
                 break;
             case "game":
-                ultConsoleGame.start("white");
+                ConsoleGame.start("white" );
                 break;
             case "clear":
                 serverClient.clear();
