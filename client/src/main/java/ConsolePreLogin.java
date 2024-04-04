@@ -5,8 +5,8 @@ import ui.ServerClient;
 import java.util.Scanner;
 
 public class ConsolePreLogin {
-    static Scanner scanner = new Scanner(System.in);
-    static ServerClient serverClient;
+    public static Scanner scanner = new Scanner(System.in);
+    public static ServerClient serverClient;
 
     public static void start(ServerClient server) throws ResponseException {
         serverClient = server;
@@ -42,7 +42,7 @@ public class ConsolePreLogin {
                 loginDisplay();
                 break;
             case "game":
-                ConsoleGame.main(choice);
+                ultConsoleGame.start("white");
                 break;
             case "clear":
                 serverClient.clear();

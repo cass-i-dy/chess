@@ -9,19 +9,17 @@ import static ui.EscapeSequences.*;
 public class ConsoleGame {
     private static final int BOARD_SIZE_IN_SQUARES = 4;
     private static final int SQUARE_SIZE_IN_CHARS = 1;
-    private static final int LINE_WIDTH_IN_CHARS = 1;
+    private final int LINE_WIDTH_IN_CHARS = 1;
     private static final String EMPTY = "  ";
-    private static final String PAWN = " P ";
-    private static final String ROOK = " R ";
-    private static final String BISHOP = " B ";
-    private static final String KNIGHT = " N ";
-    private static final String QUEEN = " Q ";
-    private static final String KING = " K ";
-
+    private final String PAWN = " P ";
+    private final String ROOK = " R ";
+    private final String BISHOP = " B ";
+    private final String KNIGHT = " N ";
+    private final String QUEEN = " Q ";
+    private final String KING = " K ";
     private static final String[] funPieces = {"R", "N", "B", "K", "Q", "B", "N", "R"};
-
-    private static final String[] pawns = {"P", "P", "P", "P", "P", "P", "P", "P" };
-    private static final String[] numbersList = {"1", "2", "3", "4", "5", "6", "7", "8"};
+    private final String[] pawns = {"P", "P", "P", "P", "P", "P", "P", "P" };
+    private final String[] numbersList = {"1", "2", "3", "4", "5", "6", "7", "8"};
     private static int counter = 0;
     private static Boolean reversed = true;
 
@@ -231,7 +229,7 @@ public class ConsoleGame {
             out.println();
     }
 
-    private static void drawVerticalLine(PrintStream out) {
+    private void drawVerticalLine(PrintStream out) {
 
         int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_CHARS +
                 (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_CHARS;
@@ -250,7 +248,7 @@ public class ConsoleGame {
         out.print(SET_TEXT_COLOR_GREEN);
     }
 
-    private static void setRed(PrintStream out) {
+    private void setRed(PrintStream out) {
         out.print(SET_BG_COLOR_RED);
         out.print(SET_TEXT_COLOR_RED);
     }

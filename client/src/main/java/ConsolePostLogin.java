@@ -6,9 +6,8 @@ import java.util.Scanner;
 
 public class ConsolePostLogin {
 
-    static Scanner scanner = new Scanner(System.in);
-
-    static ServerClient serverClient;
+    public static Scanner scanner = new Scanner(System.in);
+    public static ServerClient serverClient;
 
     public static void start(ServerClient server) throws ResponseException {
         serverClient = server;
