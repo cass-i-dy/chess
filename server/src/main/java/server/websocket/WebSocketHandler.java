@@ -5,37 +5,41 @@ import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.client.io.ConnectionManager;
+//import org.eclipse.jetty.websocket.client.io.ConnectionManager;
+//import org.eclipse.jetty.websocket.client.io.ConnectionManager;
+import webSocketMessages.serverMessages.Action;
 import webSocketMessages.serverMessages.Notification;
+//import ConnectionManager;
 
 import java.io.IOException;
 
 @WebSocket
 public class WebSocketHandler {
 
-    private final ConnectionManager connections = new ConnectionManager();
+    private final SessionManager connections = new SessionManager();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         Action action = new Gson().fromJson(message, Action.class);
         switch (action.type()) {
-            case ENTER -> enter(action.visitorName(), session);
-            case EXIT -> exit(action.visitorName());
+            case JOIN -> enter(action.gameID(), session);
+//            case EXIT -> exit(action.visitorName());
         }
     }
 
-    private void enter(String visitorName, Session session) throws IOException {
-        connections.add(visitorName, session);
-        var message = String.format("%s is in the shop", visitorName);
+    private void enter(String gameID, Session session) throws IOException {
+        connections.add(gameID, session);
+        var message
+                = String.format("%s is in the shop", gameID);
         var notification = new Notification(Notification.Type.ARRIVAL, message);
-        connections.broadcast(visitorName, notification);
+        connections.broadcast(gameID, notification);
     }
 
-    private void exit(String visitorName) throws IOException {
-        connections.remove(visitorName);
-        var message = String.format("%s left the shop", visitorName);
+    private void exit(String gameID) throws IOException {
+        connections.remove(gameID);
+        var message = String.format("%s left the shop", gameID);
         var notification = new Notification(Notification.Type.DEPARTURE, message);
-        connections.broadcast(visitorName, notification);
+        connections.broadcast(gameID, notification);
     }
 
     public void makeNoise(String petName, String sound) throws ResponseException {

@@ -23,7 +23,7 @@ public class ConsolePreLogin {
     public static void processLoginChoice(String[] choice) throws ResponseException {
         switch (choice[0].toLowerCase()) {
             case "register":
-                if (serverClient.register(choice)){
+                if (serverClient.register(choice) != null){
                     System.out.println("In Game Menu");
                     ConsolePostLogin.start(serverClient);}
                 else{loginDisplay();}

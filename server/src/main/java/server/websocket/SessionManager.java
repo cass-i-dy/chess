@@ -6,16 +6,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConnetionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+public class SessionManager {
 
-    public void add(String visitorName, Session session) {
-        var connection = new Connection(visitorName, session);
-        connections.put(visitorName, connection);
+    public SessionManager(){
+
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+
+    public void add(String gameID, Session session) {
+        var connection = new Connection(gameID, session);
+        connections.put(gameID, connection);
+    }
+
+    public void remove(String gameID) {
+        connections.remove(gameID);
     }
 
     public void broadcast(String excludeVisitorName, Notification notification) throws IOException {

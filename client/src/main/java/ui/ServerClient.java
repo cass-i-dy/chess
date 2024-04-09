@@ -6,6 +6,8 @@ import model.AuthToken;
 import model.Game;
 import model.User;
 import server.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
@@ -13,47 +15,33 @@ public class ServerClient {
     private final ServerFacade serverFacade;
 
     private final String serverUrl;
+    private final NotificationHandler notificationHandler;
 
 
-
-    public ServerClient(String serverUrl) {
+    public ServerClient(String serverUrl, NotificationHandler notificationHandler) {
         serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.notificationHandler = notificationHandler;
     }
 
-//    public String eval(String input) {
-//        try {
-//            var tokens = input.toLowerCase().split(" ");
-//            var cmd = (tokens.length > 0) ? tokens[0] : "help";
-//            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-//            return switch (cmd) {
-//                case "login" -> login(params);
-//                case "register"->register(params);
-//                case "logout"->logout(params);
-//                default -> help();
-//            };
-//        } catch (ResponseException ex) {
-//            return ex.getMessage();
-//        }
-//    }
 
-    public Boolean register(String... params) throws ResponseException {
+    public String register(String... params) {
         if (params.length >= 3) {
             try {
                 User user = new User(params[1], params[2], params[3]);
                 serverFacade.register(user);
                 System.out.println("Register Successful");
-                return true;
+                return String.format("You are registered as %s.", params[1]);
             }
             catch (ResponseException e){
                 System.out.println("Already Registered");
-                return false;
+                return null;
             }
 
         }
         else {
             System.out.println("register <username> <password> <email>");
-            return false;
+            return null;
         }
     }
 
@@ -132,6 +120,8 @@ public class ServerClient {
                 game.setPlayerColor("WHITE");
                 try {
                     serverFacade.join(game);
+                    WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+                    ws.joinUser(params[1]);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println("white player already assigned");

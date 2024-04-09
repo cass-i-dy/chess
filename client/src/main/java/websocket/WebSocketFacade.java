@@ -42,4 +42,13 @@ public class WebSocketFacade {
 //    @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+
+    public void joinUser(String gameID) throws ResponseException{
+        try {
+            var action = new Action(Action.Type.JOIN, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
 }
