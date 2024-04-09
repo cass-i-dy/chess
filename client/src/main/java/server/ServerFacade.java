@@ -22,13 +22,15 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void register(User message) throws ResponseException {
+    public String register(User message) throws ResponseException {
         var path = "/user";
         auth =  this.makeRequest("POST", path, message, AuthToken.class);
+        return auth.getToken();
     }
-    public void login(User message) throws ResponseException {
+    public String login(User message) throws ResponseException {
         var path = "/session";
         auth =  this.makeRequest("POST", path, message, AuthToken.class);
+        return auth.getName();
     }
     public void logout() throws ResponseException {
         var path = "/session";

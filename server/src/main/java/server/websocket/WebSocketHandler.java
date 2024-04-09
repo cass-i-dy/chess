@@ -22,12 +22,12 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException {
         Action action = new Gson().fromJson(message, Action.class);
         switch (action.type()) {
-            case JOIN -> enter(action.gameID(), session);
+            case JOIN -> join(action.gameID(), session);
 //            case EXIT -> exit(action.visitorName());
         }
     }
 
-    private void enter(String gameID, Session session) throws IOException {
+    private void join(String gameID, Session session) throws IOException {
         connections.add(gameID, session);
         var message
                 = String.format("%s is in the shop", gameID);

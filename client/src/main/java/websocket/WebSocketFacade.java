@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 
-public class WebSocketFacade {
+public class WebSocketFacade extends Endpoint{
 
     Session session;
     NotificationHandler notificationHandler;

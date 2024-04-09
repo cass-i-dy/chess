@@ -3,6 +3,7 @@ import requests.*;
 import dataAccess.*;
 import model.AuthToken;
 import model.Game;
+import server.websocket.WebSocketHandler;
 import spark.*;
 import service.*;
 import com.google.gson.Gson;
@@ -21,10 +22,13 @@ public class Server {
     GameService gameService = new GameService(game, auth);
     ClearService clearService = new ClearService(user, auth, game);
 
+    WebSocketHandler webSocketHandler = new WebSocketHandler();
+
 
 
 
     public int run(int desiredPort) {
+        Spark.webSocket("/connect", webSocketHandler);
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
         Spark.post("/user", this::RegisterHandler);
