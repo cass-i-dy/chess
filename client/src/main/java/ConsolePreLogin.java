@@ -37,11 +37,11 @@ public class ConsolePreLogin {
             case "quit":
                 break;
             case "help":
-                System.out.println(serverClient.help(true));
+                System.out.println(serverClient.help("login"));
                 loginDisplay();
                 break;
             case "game":
-                ConsoleGame.start("white" );
+                ConsoleGame.start(serverClient,"white" );
                 break;
             case "clear":
                 serverClient.clear();

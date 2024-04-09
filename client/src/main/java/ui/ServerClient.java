@@ -124,6 +124,7 @@ public class ServerClient {
                     ws.joinUser(params[1]);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
+                    System.out.println(e.getMessage());
                     System.out.println("white player already assigned");
                     return false;
                 }
@@ -142,21 +143,33 @@ public class ServerClient {
     }
 
 
-    public String help(Boolean login) {
-        if (login) {
+    public String help(String menu) {
+        if (menu.equals("login")) {
             return """
                     - Register <username> <password> <email>
                     - login <username> <password>
                     - quit
                     """;
         }
-        return """
-                - create <gamename>
-                - list
-                - join <gameid> <white|black|empty>
-                - observe <gameid>
-                - quit
-                - logout
-                """;
+        else if (menu.equals("menu")) {
+            return """
+                    - create <gamename>
+                    - list
+                    - join <gameid> <white|black|empty>
+                    - observe <gameid>
+                    - quit
+                    - logout
+                    """;
+        }
+        else {
+            return """
+                    - redraw chess board
+                    - leave
+                    - make move <number> <letter>
+                    - resign
+                    - highlight legal moves
+                    """;
+        }
     }
+
 }

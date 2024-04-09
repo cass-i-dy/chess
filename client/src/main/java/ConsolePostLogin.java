@@ -16,7 +16,7 @@ public class ConsolePostLogin {
 
 
     public static void gameDisplay() throws ResponseException {
-        System.out.println("type help to see game options");
+        System.out.println("type help to see menu options");
         String option = scanner.nextLine();
         String[] parts = option.split("\\s+");
         processGameChoice(parts);
@@ -34,7 +34,9 @@ public class ConsolePostLogin {
                 break;
             case "join", "observe":
                 if(serverClient.join(option)){
-                ConsoleGame.start(option[2]);}
+                    break;
+                }
+//                ConsoleGame.start(option[2]);}
                 else{gameDisplay();}
                 break;
             case "logout":
@@ -42,7 +44,7 @@ public class ConsolePostLogin {
                 ConsolePreLogin.loginDisplay();
                 break;
             case "help":
-                System.out.println(serverClient.help(false));
+                System.out.println(serverClient.help("menu"));
                 gameDisplay();
                 break;
             default:

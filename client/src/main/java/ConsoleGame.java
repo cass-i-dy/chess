@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import chess.*;
+import ui.ServerClient;
 
 import static ui.EscapeSequences.*;
 
@@ -21,20 +22,54 @@ public class ConsoleGame {
 
     private static ChessBoard board;
 
+    private static String team;
 
-    public static void start(String color) throws ResponseException {
-        if (color.equalsIgnoreCase("BLACK")){
+    public static ServerClient serverClient;
+
+
+    public static void start(ServerClient server, String color) throws ResponseException {
+        serverClient = server;
+        if (color.equalsIgnoreCase("BLACK")) {
             reversed = true;
+            team = "BLACK";
         }
-        System.out.println("Type 'start' to start game");
-        String option = ConsolePostLogin.scanner.nextLine();
-        String[] parts = option.split("\\s+");
-        main(parts, color);
-        System.out.println("In Game Menu");
-        ConsolePostLogin.gameDisplay();
+        else{
+        team = "WHITE";}
     }
 
-    public static void main(String[] args, String color) {
+    public static void displayOptions() throws ResponseException {
+
+            System.out.println("Type 'help' to see game options");
+            String option = ConsolePostLogin.scanner.nextLine();
+            String[] parts = option.split("\\s+");
+            processGameAction(parts);
+        }
+
+
+    public static void processGameAction(String[] option) throws ResponseException {
+        switch (option[0].toLowerCase()) {
+            case "redraw":
+                printGame(option, team);
+                displayOptions();
+                break;
+            case "leave":
+                ConsolePostLogin.gameDisplay();
+                break;
+            case "make":
+                break;
+            case "resign":
+                ConsolePostLogin.gameDisplay();
+                break;
+            case "help":
+                System.out.println(serverClient.help(""));
+                displayOptions();
+                break;
+            default:
+                System.out.print("Invalid Option");
+        }
+    }
+
+    public static void printGame(String[] args, String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board = new ChessBoard();
         board.resetBoard();
