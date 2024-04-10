@@ -17,6 +17,8 @@ public class ServerClient {
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
 
+    public AuthToken authToken;
+
 
     public ServerClient(String serverUrl, NotificationHandler notificationHandler) {
         serverFacade = new ServerFacade(serverUrl);
@@ -29,7 +31,7 @@ public class ServerClient {
         if (params.length >= 3) {
             try {
                 User user = new User(params[1], params[2], params[3]);
-                serverFacade.register(user);
+                this.authToken = serverFacade.register(user);
                 System.out.println("Register Successful");
                 return String.format("You are registered as %s.", params[1]);
             }
@@ -121,7 +123,7 @@ public class ServerClient {
                 try {
                     serverFacade.join(game);
                     WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
-                    ws.joinUser(params[1]);
+                    ws.joinUser(params[1], "WHITE", authToken);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println(e.getMessage());

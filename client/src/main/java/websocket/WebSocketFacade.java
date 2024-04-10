@@ -3,12 +3,15 @@ package websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.AuthToken;
 import webSocketMessages.serverMessages.*;
 
 import javax.websocket.*;
 import java.net.URI;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import webSocketMessages.userCommands.UserGameCommand;
 
 
 public class WebSocketFacade extends Endpoint{
@@ -43,10 +46,10 @@ public class WebSocketFacade extends Endpoint{
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinUser(String gameID) throws ResponseException{
+    public void joinUser(String gameID, String playerColor, AuthToken authToken) throws ResponseException{
         try {
-            var action = new Action(Action.Type.JOIN, gameID);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            var userGameCommand = new UserGameCommand(authToken.getName());
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }

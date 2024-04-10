@@ -21,7 +21,6 @@ public class Server {
     UserService userService = new UserService(user, auth);
     GameService gameService = new GameService(game, auth);
     ClearService clearService = new ClearService(user, auth, game);
-
     WebSocketHandler webSocketHandler = new WebSocketHandler();
 
 
