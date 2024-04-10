@@ -134,6 +134,8 @@ public class ServerClient {
                 game.setPlayerColor("BLACK");
                 try {
                     serverFacade.join(game);
+                    WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+                    ws.joinUser(params[1], "BLACK", authToken);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println("black player already assigned");

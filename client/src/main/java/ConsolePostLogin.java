@@ -34,9 +34,9 @@ public class ConsolePostLogin {
                 break;
             case "join", "observe":
                 if(serverClient.join(option)){
+                    ConsoleGame.start(serverClient, option[2]);
                     break;
                 }
-//                ConsoleGame.start(option[2]);}
                 else{gameDisplay();}
                 break;
             case "logout":
