@@ -1,16 +1,15 @@
 package server.websocket;
 
+import chess.ChessGame;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
 
 public class Connection {
-    public String gameID;
-
     public Session session;
-
-    public Connection(String gameID, Session session) {
-        this.gameID = gameID;
+    public String authToken;
+    public void joinConnection(String authToken, Session session) {
+        this.authToken = authToken;
         this.session = session;
     }
 

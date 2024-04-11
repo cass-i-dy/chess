@@ -19,6 +19,8 @@ public class WebSocketFacade extends Endpoint{
     Session session;
     NotificationHandler notificationHandler;
 
+    public AuthToken authToken;
+
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
         try {
@@ -48,7 +50,8 @@ public class WebSocketFacade extends Endpoint{
 
     public void joinUser(String gameID, String playerColor, AuthToken authToken) throws ResponseException{
         try {
-            var userGameCommand = new UserGameCommand(authToken.getName());
+            var userGameCommand = new UserGameCommand(authToken.getToken());
+            this.authToken = authToken;
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

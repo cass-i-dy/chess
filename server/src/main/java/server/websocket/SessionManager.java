@@ -1,9 +1,13 @@
 package server.websocket;
+import chess.ChessGame;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
@@ -12,22 +16,57 @@ public class SessionManager {
 
     }
 
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    // add another hashmap to store connections
+    public final ConcurrentHashMap<String, HashSet<Connection>> connections = new ConcurrentHashMap<>();
 
-    public void add(String gameID, Session session) {
-        var connection = new Connection(gameID, session);
-        connections.put(gameID, connection);
+//    public final HashMap<String, Set<>>
+
+    public void joinAdd(String username, String authToken, String gameID, ChessGame.TeamColor playerColor, Session session) {
+        var connection = new Connection();
+        connection.joinConnection(authToken, session);
+//        connections.put(username, connection);
+//        connections.put(authToken, connection);
+//        connections.put(gameID, connection);
+        if (connections.get(gameID) == null) {
+            connections.put(gameID, new HashSet<>());
+        }
+        connections.get(gameID).add(connection);
+
+//        connections.put(String.valueOf(playerColor), connection);
+
+
     }
 
     public void remove(String gameID) {
         connections.remove(gameID);
     }
 
-    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
+    public void broadcast(String excludeAuthToken, Notification notification) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
+        for (var game : connections.values()) {
+            for (var c: game) {
+                if (c.session.isOpen()) {
+                    if (!c.authToken.equals(excludeAuthToken)) {
+                        c.send(notification.toString());
+                    }
+                } else {
+                    removeList.add(c);
+                }
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.authToken);
+        }
+    }
+
+    public void broadcastOnce(String excludeVisitorName, Notification notification) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (var game : connections.values()) {
+            for (var c:game)
             if (c.session.isOpen()) {
-                if (!c.gameID.equals(excludeVisitorName)) {
+                if (c.authToken.equals(excludeVisitorName)) {
                     c.send(notification.toString());
                 }
             } else {
@@ -37,7 +76,7 @@ public class SessionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.gameID);
+            connections.remove(c.authToken);
         }
     }
 }
