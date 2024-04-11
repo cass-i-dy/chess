@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySQLDataAccessAuth;
@@ -66,6 +67,15 @@ public class WebSocketHandler {
             Game game = gameAccess.getGame(joinPlayer.gameID);
             if (game == null) {
                 throw new WebsocketException("gameID doesn't exist");
+            }
+            if (joinPlayer.playerColor == ChessGame.TeamColor.WHITE && game.getWhite() != null){
+                throw new WebsocketException("White player not available");
+            }
+            if (joinPlayer.playerColor == ChessGame.TeamColor.BLACK && game.getBlack() != null){
+                throw new WebsocketException("Black player not available");
+            }
+            if (game.getBlack() == null && game.getWhite() == null){
+                throw new WebsocketException("Game not Valid");
             }
             connections.joinAdd(authToken.getName(), joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
 
