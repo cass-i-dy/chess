@@ -19,6 +19,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
               `gameid` varchar(255) NOT NULL,
               `whiteusername` varchar(255) ,
               `blackusername` varchar(255) ,
+              `victor` varchar(255) ,
               `gameobject` TEXT ,
 
               PRIMARY KEY (`gameid`)
@@ -29,9 +30,14 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
     @Override
     public void addGame(String gameName) throws DataAccessException {
         configureDatabase(createStatements);
-        String gameObjectJson = new Gson().toJson(new ChessGame());
-        var statement = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) VALUES (?,?,?,?,?)";
-        executeUpdate(statement, gameName, countGameID, null, null,  gameObjectJson);
+        ChessGame chessGame = new ChessGame();
+        ChessBoard chessBoard = new ChessBoard();
+        chessBoard.resetBoard();
+        chessGame.setBoard(chessBoard);
+        chessGame.setTeamTurn(ChessGame.TeamColor.WHITE);
+        String gameObjectJson = new Gson().toJson(chessGame);
+        var statement = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, victor, gameobject) VALUES (?,?,?,?,?,?)";
+        executeUpdate(statement, gameName, countGameID, null, null, null, gameObjectJson);
         countGameID++;
     }
 
@@ -62,10 +68,15 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         String gameID = rs.getString("gameID");
         String whiteUserName = rs.getString("whiteusername");
         String blackUserName = rs.getString("blackusername");
+        String victor = rs.getString("victor");
+        String chessGame = rs.getString("gameobject");
         if (gameName == null || gameID == null){
             return null;
         }
-        return new Game(gameName, gameID, whiteUserName, blackUserName);
+        Game game = new Game(gameName, gameID, whiteUserName, blackUserName);
+        game.setVictor(victor);
+        game.updateChessGame(new Gson().fromJson(chessGame, ChessGame.class));
+        return game;
     }
 
     @Override
@@ -119,16 +130,17 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             game.setWhite(userName);
             var statementDelete = "DELETE FROM games WHERE gameid = ?";
             executeUpdate(statementDelete, game.getGameID());
-            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) Values(?,?,?,?,?) ";
-            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(),  new Gson().toJson(game.getChessGame()));
+            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, victor, gameobject) Values(?,?,?,?,?,?) ";
+
+            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(), game.getVictor(), new Gson().toJson(game.getChessGame()));
             return true;
         }
         else if (playerColor.equals("BLACK") && (game.getBlack() == null)){
             game.setBlack(userName);
             var statementDelete = "DELETE FROM games WHERE gameid = ?";
             executeUpdate(statementDelete, game.getGameID());
-            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) Values(?,?,?,?,?) ";
-            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(),  new Gson().toJson(game.getChessGame()));
+            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, victor, gameobject) Values(?,?,?,?,?,?) ";
+            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(), game.getVictor(), new Gson().toJson(game.getChessGame()));
             return true;
         }
         else {
@@ -142,7 +154,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         configureDatabase(createStatements);
         var result = new ArrayList<Game>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gamename, gameid, whiteusername, blackusername, gameobject FROM games";
+            var statement = "SELECT gamename, gameid, whiteusername, blackusername FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
@@ -162,5 +174,13 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         countGameID = 1;
         var statement = "TRUNCATE TABLE games";
         executeUpdate(statement);
+    }
+
+    public void updateGame(Game game) throws DataAccessException {
+        configureDatabase(createStatements);
+        var statementDelete = "DELETE FROM games WHERE gameid = ?";
+        executeUpdate(statementDelete, game.getGameID());
+        var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, victor, gameobject) Values(?,?,?,?,?,?) ";
+        executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(), game.getVictor(), new Gson().toJson(game.getChessGame()));
     }
 }

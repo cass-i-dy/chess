@@ -16,10 +16,7 @@ public class Game {
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
-        this.playerColor = null;
         this.chessGame = new ChessGame();
-        this.victor = null;
-
     }
 
     public void setPlayerColor(String color) {
@@ -49,7 +46,13 @@ public class Game {
     public ChessGame getChessGame(){
         return chessGame;
     }
-    public String victor(){
+    public String getVictor(){
         return victor;
+    }
+    public void setVictor(String name) {
+        this.victor = name;
+    }
+    public void updateChessGame(ChessGame chessGame){
+        this.chessGame = chessGame;
     }
 }

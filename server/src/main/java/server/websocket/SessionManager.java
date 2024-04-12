@@ -57,10 +57,11 @@ public class SessionManager {
         connections.remove(gameID);
     }
 
-    public void broadcast(String excludeAuthToken, Notification notification) throws IOException {
+    public void broadcast(String excludeAuthToken, Notification notification, String gameID) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var game : connections.values()) {
-            for (var c : game) {
+        var gameConnections = connections.get(gameID);
+        if (gameConnections != null){
+            for (var c : gameConnections) {
                 if (c.session.isOpen()) {
                     if (!c.authToken.equals(excludeAuthToken)) {
                         c.send(notification.toString());
@@ -68,7 +69,8 @@ public class SessionManager {
                 } else {
                     removeList.add(c);
                 }
-            }
+
+        }
         }
 
         // Clean up any connections that were left open.
