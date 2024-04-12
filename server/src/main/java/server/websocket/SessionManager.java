@@ -5,10 +5,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.Notification;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
@@ -42,6 +39,18 @@ public class SessionManager {
 
     }
 
+    public void leave(String authToken, String gameID) {
+        for (Set<Connection> game : connections.values()) {
+            Iterator<Connection> iterator = game.iterator();
+                while (iterator.hasNext()) {
+                    Connection c = iterator.next();
+                    if (c.session.isOpen() && c.authToken.equals(authToken)) {
+                        // Remove the current Connection using the iterator's remove() method
+                        iterator.remove();
+                        System.out.println("Connection removed successfully");
+                    }
+                }
+        }}
 
 
     public void remove(String gameID) {

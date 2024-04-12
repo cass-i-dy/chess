@@ -21,6 +21,7 @@ import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.LeaveGame;
 import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 //import ConnectionManager;
@@ -50,10 +51,7 @@ public class WebSocketHandler {
             case JOIN_OBSERVER -> observe(message, session);
             case MAKE_MOVE -> makeMove(message, session);
             case LEAVE -> leaveGame(message, session);
-            case RESIGN -> {
-            }
-            default -> {
-            }
+            case RESIGN -> resignGame(message, session);
         }
     }
 
@@ -156,7 +154,6 @@ public class WebSocketHandler {
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
             connections.broadcast(authToken.getToken(), response);
-            connections.broadcastOnce(authToken.getToken(), response);
 
 
         }
@@ -168,7 +165,29 @@ public class WebSocketHandler {
 
     }
 
-    public void leaveGame(){
+    public void leaveGame(String inputMessage, Session session){
+        LeaveGame leave= new Gson().fromJson(inputMessage, LeaveGame.class);
+        try {
+            AuthToken authToken = authAccess.findAuthToken(leave.authToken);
+            if (authToken == null) {
+                throw new WebsocketException("unauthorized");
+            }
+            Game game = gameAccess.getGame(leave.gameID);
+            if (game == null) {
+                throw new WebsocketException("gameID doesn't exist");
+            }
+            connections.leave(authToken.getToken(), leave.gameID);
+            var message
+                    = String.format(authToken.getName() + " has left");
+            var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken.getToken(), notification);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void resignGame(String inputMessage, Session session){
+        LeaveGame leave= new Gson().fromJson(inputMessage, LeaveGame.class);
 
     }
 
