@@ -67,4 +67,14 @@ public class WebSocketFacade extends Endpoint{
             throw new RuntimeException(e);
         }
     }
+
+    public void makeMove(int row, int col, AuthToken authToken){
+        try {
+            var userGameCommand = new UserGameCommand(authToken.getToken());
+            this.authToken = authToken;
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -148,6 +148,22 @@ public class ServerClient {
         return true;
     }
 
+    public void makeMove(String... params){
+        if (params.length < 4){
+            System.out.println("too few arguments");}
+        int row = Integer.parseInt(params[2]);
+        int col = Integer.parseInt(params[3]);
+//        serverFacade.update(row, col)
+        try {
+        WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+        ws.makeMove(row, col, authToken);}
+        catch (Exception e) {
+            System.out.println("invalid");
+        }
+
+
+    }
+
 
     public String help(String menu) {
         if (menu.equals("login")) {

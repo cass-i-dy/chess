@@ -1,5 +1,6 @@
 package server.websocket;
 import chess.ChessGame;
+import chess.ChessMove;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.Notification;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
-    public SessionManager(){
+    public SessionManager() {
 
     }
 
@@ -38,7 +39,10 @@ public class SessionManager {
             connections.put(gameID, new HashSet<>());
         }
         connections.get(gameID).add(connection);
+
     }
+
+
 
     public void remove(String gameID) {
         connections.remove(gameID);
@@ -47,7 +51,7 @@ public class SessionManager {
     public void broadcast(String excludeAuthToken, Notification notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var game : connections.values()) {
-            for (var c: game) {
+            for (var c : game) {
                 if (c.session.isOpen()) {
                     if (!c.authToken.equals(excludeAuthToken)) {
                         c.send(notification.toString());
@@ -67,14 +71,14 @@ public class SessionManager {
     public void broadcastOnce(String excludeVisitorName, Notification notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var game : connections.values()) {
-            for (var c:game)
-            if (c.session.isOpen()) {
-                if (c.authToken.equals(excludeVisitorName)) {
-                    c.send(notification.toString());
+            for (var c : game)
+                if (c.session.isOpen()) {
+                    if (c.authToken.equals(excludeVisitorName)) {
+                        c.send(notification.toString());
+                    }
+                } else {
+                    removeList.add(c);
                 }
-            } else {
-                removeList.add(c);
-            }
         }
 
         // Clean up any connections that were left open.
@@ -83,3 +87,4 @@ public class SessionManager {
         }
     }
 }
+

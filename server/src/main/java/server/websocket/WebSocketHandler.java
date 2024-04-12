@@ -1,6 +1,8 @@
 package server.websocket;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySQLDataAccessAuth;
@@ -19,6 +21,7 @@ import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 //import ConnectionManager;
 
@@ -46,8 +49,7 @@ public class WebSocketHandler {
             case JOIN_PLAYER -> join(message, session);
             case JOIN_OBSERVER -> observe(message, session);
             case MAKE_MOVE -> makeMove(message, session);
-            case LEAVE -> {
-            }
+            case LEAVE -> leaveGame(message, session);
             case RESIGN -> {
             }
             default -> {
@@ -128,7 +130,45 @@ public class WebSocketHandler {
         }
     }
 
-    public void makeMove(String inputMessage, Session session){
+    public void makeMove(String inputMessage, Session session) throws IOException {
+        MakeMove possibleMove = new Gson().fromJson(inputMessage, MakeMove.class);
+        try {
+            AuthToken authToken = authAccess.findAuthToken(possibleMove.authToken);
+            if (authToken == null) {
+                throw new WebsocketException("unauthorized");
+            }
+            Game game = gameAccess.getGame(possibleMove.gameID);
+            if (game == null) {
+                throw new WebsocketException("gameID doesn't exist");
+            }
+            if (game.getChessGame().isInCheckmate(ChessGame.TeamColor.WHITE) || (game.getChessGame().isInCheckmate(ChessGame.TeamColor.BLACK))){
+                throw new WebsocketException("In CheckMate");
+            }
+            if (!(game.getChessGame().validMoves(possibleMove.move.getStartPosition()).contains(possibleMove.move))){
+                throw new WebsocketException("Move not valid");
+            }
+            var message
+                    = String.format("Move was Made");
+            var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken.getToken(), notification);
+
+            var gameObject = gameAccess.getGame(possibleMove.gameID);
+            String gameMessage = new Gson().toJson(gameObject, Game.class);
+            var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
+            connections.broadcast(authToken.getToken(), response);
+            connections.broadcastOnce(authToken.getToken(), response);
+
+
+        }
+
+        catch (Exception e) {
+            var response = new Error(ServerMessage.ServerMessageType.ERROR, "gameID doesn't exist");
+            connections.broadcastOnce(possibleMove.authToken, response);
+        }
+
+    }
+
+    public void leaveGame(){
 
     }
 
