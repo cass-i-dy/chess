@@ -57,4 +57,14 @@ public class WebSocketFacade extends Endpoint{
             throw new ResponseException(500, ex.getMessage());
         }
     }
+
+    public void joinObserve(String gameID, String playerColor, AuthToken authToken) {
+        try {
+            var userGameCommand = new UserGameCommand(authToken.getToken());
+            this.authToken = authToken;
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

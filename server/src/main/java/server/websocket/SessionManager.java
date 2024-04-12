@@ -23,18 +23,21 @@ public class SessionManager {
 
     public void joinAdd(String username, String authToken, String gameID, ChessGame.TeamColor playerColor, Session session) {
         var connection = new Connection();
-        connection.joinConnection(authToken, session);
-//        connections.put(username, connection);
-//        connections.put(authToken, connection);
-//        connections.put(gameID, connection);
+        connection.Connection(authToken, session);
         if (connections.get(gameID) == null) {
             connections.put(gameID, new HashSet<>());
         }
         connections.get(gameID).add(connection);
 
-//        connections.put(String.valueOf(playerColor), connection);
+    }
 
-
+    public void observeAdd(String username, String authToken, String gameID, Session session) {
+        var connection = new Connection();
+        connection.Connection(authToken, session);
+        if (connections.get(gameID) == null) {
+            connections.put(gameID, new HashSet<>());
+        }
+        connections.get(gameID).add(connection);
     }
 
     public void remove(String gameID) {

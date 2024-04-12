@@ -102,7 +102,7 @@ public class ServerClient {
         return result.toString();
     }
 
-    public Boolean join(String... params) {
+    public Boolean join(String... params) throws ResponseException {
         if (params.length < 2) {
             System.out.println("join <gameID> <white|black|empty>");
             return false;
@@ -116,6 +116,8 @@ public class ServerClient {
         }
         if (params.length == 2) {
             System.out.println("observing game");
+            WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.joinObserve(params[1], "WHITE", authToken);
             return true;
         } else {
             if (params[2].toUpperCase().equals("WHITE")) {

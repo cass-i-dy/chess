@@ -1,11 +1,15 @@
 package model;
 
+import chess.ChessGame;
+
 public class Game {
     String gameName;
     String gameID;
     String whiteUsername;
     String blackUsername;
     String playerColor;
+    ChessGame chessGame;
+    String victor;
 
     public Game(String gameName, String gameID, String whiteUsername, String blackUsername){
         this.gameName = gameName;
@@ -13,6 +17,8 @@ public class Game {
         this.whiteUsername = whiteUsername;
         this.blackUsername = blackUsername;
         this.playerColor = null;
+        this.chessGame = new ChessGame();
+        this.victor = null;
 
     }
 
@@ -39,5 +45,11 @@ public class Game {
     }
     public void setBlack(String playerBlack){
         blackUsername = playerBlack;
+    }
+    public ChessGame getChessGame(){
+        return chessGame;
+    }
+    public String victor(){
+        return victor;
     }
 }

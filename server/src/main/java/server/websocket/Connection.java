@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Connection {
     public Session session;
     public String authToken;
-    public void joinConnection(String authToken, Session session) {
+    public void Connection(String authToken, Session session) {
         this.authToken = authToken;
         this.session = session;
     }

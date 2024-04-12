@@ -1,5 +1,8 @@
 package dataAccess;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.Game;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +19,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
               `gameid` varchar(255) NOT NULL,
               `whiteusername` varchar(255) ,
               `blackusername` varchar(255) ,
+              `gameobject` TEXT ,
 
               PRIMARY KEY (`gameid`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -25,8 +29,9 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
     @Override
     public void addGame(String gameName) throws DataAccessException {
         configureDatabase(createStatements);
-        var statement = "INSERT INTO games (gamename, gameid, whiteusername, blackusername) VALUES (?,?,?,?)";
-        executeUpdate(statement, gameName, countGameID, null, null);
+        String gameObjectJson = new Gson().toJson(new ChessGame());
+        var statement = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) VALUES (?,?,?,?,?)";
+        executeUpdate(statement, gameName, countGameID, null, null,  gameObjectJson);
         countGameID++;
     }
 
@@ -114,16 +119,16 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             game.setWhite(userName);
             var statementDelete = "DELETE FROM games WHERE gameid = ?";
             executeUpdate(statementDelete, game.getGameID());
-            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername) Values(?,?,?,?) ";
-            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack());
+            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) Values(?,?,?,?,?) ";
+            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(),  new Gson().toJson(game.getChessGame()));
             return true;
         }
         else if (playerColor.equals("BLACK") && (game.getBlack() == null)){
             game.setBlack(userName);
             var statementDelete = "DELETE FROM games WHERE gameid = ?";
             executeUpdate(statementDelete, game.getGameID());
-            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername) Values(?,?,?,?) ";
-            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack());
+            var statementInsert = "INSERT INTO games (gamename, gameid, whiteusername, blackusername, gameobject) Values(?,?,?,?,?) ";
+            executeUpdate(statementInsert, game.getName(), game.getGameID(), game.getWhite(), game.getBlack(),  new Gson().toJson(game.getChessGame()));
             return true;
         }
         else {
@@ -137,7 +142,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         configureDatabase(createStatements);
         var result = new ArrayList<Game>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gamename, gameid, whiteusername, blackusername FROM games";
+            var statement = "SELECT gamename, gameid, whiteusername, blackusername, gameobject FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {

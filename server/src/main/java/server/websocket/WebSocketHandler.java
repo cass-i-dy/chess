@@ -44,10 +44,8 @@ public class WebSocketHandler {
         }
         switch (userGameCommand.getCommandType()) {
             case JOIN_PLAYER -> join(message, session);
-            case JOIN_OBSERVER -> {
-            }
-            case MAKE_MOVE -> {
-            }
+            case JOIN_OBSERVER -> observe(message, session);
+            case MAKE_MOVE -> makeMove(message, session);
             case LEAVE -> {
             }
             case RESIGN -> {
@@ -68,13 +66,13 @@ public class WebSocketHandler {
             if (game == null) {
                 throw new WebsocketException("gameID doesn't exist");
             }
-            if (joinPlayer.playerColor == ChessGame.TeamColor.WHITE && game.getWhite() != null){
+            if (joinPlayer.playerColor == ChessGame.TeamColor.WHITE && !(game.getWhite().equals(authToken.getName()))) {
                 throw new WebsocketException("White player not available");
             }
-            if (joinPlayer.playerColor == ChessGame.TeamColor.BLACK && game.getBlack() != null){
+            if (joinPlayer.playerColor == ChessGame.TeamColor.BLACK && !(game.getBlack().equals(authToken.getName()))) {
                 throw new WebsocketException("Black player not available");
             }
-            if (game.getBlack() == null && game.getWhite() == null){
+            if (game.getBlack() == null && game.getWhite() == null) {
                 throw new WebsocketException("Game not Valid");
             }
             connections.joinAdd(authToken.getName(), joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
@@ -87,7 +85,6 @@ public class WebSocketHandler {
             var gameObject = gameAccess.getGame(joinPlayer.gameID);
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
-//        var gameUpdateNotification = new Notification(ServerMessage.ServerMessageType.LOAD_GAME, gameMessage);
             connections.broadcastOnce(authToken.getToken(), response);
         } catch (Exception e) {
             connections.joinAdd("", joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
@@ -95,7 +92,47 @@ public class WebSocketHandler {
             connections.broadcastOnce(joinPlayer.authToken, response);
             connections.remove(joinPlayer.gameID);
         }
-    }}
+    }
+
+    private void observe(String inputMessage, Session session) throws IOException {
+        JoinPlayer joinPlayer = new Gson().fromJson(inputMessage, JoinPlayer.class);
+        try{
+            AuthToken authToken = authAccess.findAuthToken(joinPlayer.authToken);
+            if (authToken == null) {
+                throw new WebsocketException("unauthorized");
+            }
+            Game game = gameAccess.getGame(joinPlayer.gameID);
+            if (game == null) {
+                throw new WebsocketException("gameID doesn't exist");
+            }
+            if (game.getBlack() == null && game.getWhite() == null) {
+                throw new WebsocketException("Game not Valid");
+            }
+            connections.observeAdd(authToken.getName(), joinPlayer.authToken, joinPlayer.gameID, session);
+            var message
+                    = String.format(authToken.getName() + " is observing ");
+            var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken.getToken(), notification);
+
+            var gameObject = gameAccess.getGame(joinPlayer.gameID);
+            String gameMessage = new Gson().toJson(gameObject, Game.class);
+            var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
+            connections.broadcastOnce(authToken.getToken(), response);
+
+        }
+        catch (Exception e){
+            connections.observeAdd("", joinPlayer.authToken, joinPlayer.gameID, session);
+            var response = new Error(ServerMessage.ServerMessageType.ERROR, "gameID doesn't exist");
+            connections.broadcastOnce(joinPlayer.authToken, response);
+            connections.remove(joinPlayer.gameID);
+        }
+    }
+
+    public void makeMove(String inputMessage, Session session){
+
+    }
+
+}
 
 
 //    private void exit(String gameID) throws IOException {
