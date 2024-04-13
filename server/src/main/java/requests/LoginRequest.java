@@ -10,8 +10,8 @@ public class LoginRequest {
     public String getPassword(){
         return password;
     }
-    public void setUsername(String UserName){
-        this.username = UserName;
+    public void setUsername(String Username){
+        this.username = Username;
     }
     public void setPassword(String password){
         this.password = password;

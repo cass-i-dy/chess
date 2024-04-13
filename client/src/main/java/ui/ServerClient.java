@@ -1,29 +1,36 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
 import model.Game;
 import model.User;
 import server.ServerFacade;
+import webSocketMessages.serverMessages.Notification;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class ServerClient {
+public class ServerClient extends NotificationHandler {
     private final ServerFacade serverFacade;
 
     private final String serverUrl;
-    private final NotificationHandler notificationHandler;
-
     public AuthToken authToken;
 
+    public ChessGame chessGame;
 
-    public ServerClient(String serverUrl, NotificationHandler notificationHandler) {
+
+    public ServerClient(String serverUrl) {
         serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        this.notificationHandler = notificationHandler;
+    }
+
+    public ChessGame getChessGame(){
+        return chessGame;
     }
 
 
@@ -116,7 +123,7 @@ public class ServerClient {
         }
         if (params.length == 2) {
             System.out.println("observing game");
-            WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
             ws.joinObserve(params[1], "WHITE", authToken);
             return true;
         } else {
@@ -124,8 +131,8 @@ public class ServerClient {
                 game.setPlayerColor("WHITE");
                 try {
                     serverFacade.join(game);
-                    WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
-                    ws.joinUser(params[1], "WHITE", authToken);
+                    WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+                    ws.joinUser(params[1], ChessGame.TeamColor.WHITE, authToken);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println(e.getMessage());
@@ -136,8 +143,9 @@ public class ServerClient {
                 game.setPlayerColor("BLACK");
                 try {
                     serverFacade.join(game);
-                    WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
-                    ws.joinUser(params[1], "BLACK", authToken);
+                    WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+                    ws.joinUser(params[1], ChessGame.TeamColor.BLACK, authToken);
+                    chessGame = ws.getGame();
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println("black player already assigned");
@@ -155,13 +163,16 @@ public class ServerClient {
         int col = Integer.parseInt(params[3]);
 //        serverFacade.update(row, col)
         try {
-        WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+        WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
         ws.makeMove(row, col, authToken);}
         catch (Exception e) {
             System.out.println("invalid");
         }
+    }
 
-
+    public int getLetterCol(String character){
+        List<String> characters = new ArrayList<>(List.of("a", "b", "c", "d", "e", "f", "g", "h"));
+        return 1;
     }
 
 

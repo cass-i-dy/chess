@@ -30,13 +30,13 @@ public class Server {
         Spark.webSocket("/connect", webSocketHandler);
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
-        Spark.post("/user", this::RegisterHandler);
-        Spark.post("/session", this::LoginHandler);
-        Spark.post(("/game"), this::CreateGameHandler);
-        Spark.put(("/game"), this::JoinGameHandler);
-        Spark.get(("/game"), this::ListGamesHandler);
-        Spark.delete("/db", this::ClearApplicationHandler);
-        Spark.delete("/session", this::LogoutHandler);
+        Spark.post("/user", this::registerHandler);
+        Spark.post("/session", this::loginHandler);
+        Spark.post(("/game"), this::createGameHandler);
+        Spark.put(("/game"), this::joinGameHandler);
+        Spark.get(("/game"), this::listGamesHandler);
+        Spark.delete("/db", this::clearApplicationHandler);
+        Spark.delete("/session", this::logoutHandler);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -47,7 +47,7 @@ public class Server {
     }
 
     // Registers the User
-    public Object RegisterHandler(Request req, Response res) {
+    public Object registerHandler(Request req, Response res) {
         try {
             RegisterRequest request = new Gson().fromJson(req.body(), RegisterRequest.class);
             AuthToken authToken = userService.createUser(request);
@@ -74,7 +74,7 @@ public class Server {
     }
 
     // Login the User
-    public Object LoginHandler(Request req, Response res) {
+    public Object loginHandler(Request req, Response res) {
         try {
             LoginRequest request = new Gson().fromJson(req.body(), LoginRequest.class);
             AuthToken authToken = userService.findLogin(request);
@@ -99,7 +99,7 @@ public class Server {
     }
 
     // Logout the User
-    public Object LogoutHandler(Request req, Response res) {
+    public Object logoutHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             LogoutRequest request = new LogoutRequest(authToken);
@@ -122,7 +122,7 @@ public class Server {
     }
 
     // Creates the Game
-    public Object CreateGameHandler(Request req, Response res) {
+    public Object createGameHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             CreateGameRequest request = new Gson().fromJson(req.body(), CreateGameRequest.class);
@@ -149,7 +149,7 @@ public class Server {
     }
 
     // Joins a Game
-    public Object JoinGameHandler(Request req, Response res) {
+    public Object joinGameHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             JoinGameRequest request = new Gson().fromJson(req.body(), JoinGameRequest.class);
@@ -179,7 +179,7 @@ public class Server {
     }
 
     // Lists the Game
-    public Object ListGamesHandler(Request req, Response res) {
+    public Object listGamesHandler(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             ListGamesRequest request = new ListGamesRequest(authToken);
@@ -202,7 +202,7 @@ public class Server {
     }
 
     // Clears all the Games and Users
-    public Object ClearApplicationHandler(Request req, Response res) {
+    public Object clearApplicationHandler(Request req, Response res) {
         try {
             clearService.clearEverything();
             res.status(200);

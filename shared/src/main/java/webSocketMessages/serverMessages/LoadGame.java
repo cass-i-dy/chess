@@ -8,4 +8,8 @@ public class LoadGame extends Notification{
         this.game = game;
 
     }
+
+    public String getGame(){
+        return game;
+    }
 }

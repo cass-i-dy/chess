@@ -34,6 +34,9 @@ public class WebSocketHandler {
 
     MySQLDataAccessAuth authAccess = new MySQLDataAccessAuth();
 
+    Game diplayGame;
+
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
         UserGameCommand userGameCommand = null;
@@ -81,7 +84,7 @@ public class WebSocketHandler {
                     = String.format(authToken.getName() + " has joined as " + joinPlayer.playerColor);
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken.getToken(), notification, joinPlayer.gameID);
-
+            diplayGame = game;
             var gameObject = gameAccess.getGame(joinPlayer.gameID);
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
@@ -90,11 +93,10 @@ public class WebSocketHandler {
             connections.joinAdd("", joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(joinPlayer.authToken, response);
-            connections.remove(joinPlayer.gameID);
-        }
+            connections.remove(joinPlayer.gameID);}
     }
 
-    private void observe(String inputMessage, Session session) throws IOException {
+    private Game observe(String inputMessage, Session session) throws IOException {
         JoinPlayer joinPlayer = new Gson().fromJson(inputMessage, JoinPlayer.class);
         try{
             AuthToken authToken = authAccess.findAuthToken(joinPlayer.authToken);
@@ -116,7 +118,7 @@ public class WebSocketHandler {
                     = String.format(authToken.getName() + " is observing ");
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken.getToken(), notification, joinPlayer.gameID);
-
+            diplayGame = game;
             var gameObject = gameAccess.getGame(joinPlayer.gameID);
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
@@ -129,9 +131,10 @@ public class WebSocketHandler {
             connections.broadcastOnce(joinPlayer.authToken, response);
             connections.remove(joinPlayer.gameID);
         }
+        return diplayGame;
     }
 
-    public void makeMove(String inputMessage, Session session) throws IOException {
+    public Game makeMove(String inputMessage, Session session) throws IOException {
         MakeMove possibleMove = new Gson().fromJson(inputMessage, MakeMove.class);
         try {
             AuthToken authToken = authAccess.findAuthToken(possibleMove.authToken);
@@ -168,6 +171,7 @@ public class WebSocketHandler {
             }
             game.getChessGame().makeMove(possibleMove.move);
             gameAccess.updateGame(game);
+            diplayGame = game;
             var message
                     = String.format("Move was Made");
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
@@ -187,7 +191,7 @@ public class WebSocketHandler {
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(possibleMove.authToken, response);
         }
-
+        return diplayGame;
     }
 
     public void leaveGame(String inputMessage, Session session){

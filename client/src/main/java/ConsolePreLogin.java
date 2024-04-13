@@ -1,6 +1,8 @@
 import exception.ResponseException;
 import ui.ServerClient;
+import websocket.NotificationHandler;
 
+import java.util.NavigableMap;
 import java.util.Scanner;
 
 public class ConsolePreLogin {
@@ -40,11 +42,12 @@ public class ConsolePreLogin {
                 System.out.println(serverClient.help("login"));
                 loginDisplay();
                 break;
-            case "game":
-                ConsoleGame.start(serverClient,"white" );
-                break;
+//            case "game":
+//                ConsoleGame.start(serverClient,"white" );
+//                break;
             case "clear":
                 serverClient.clear();
+                ConsolePreLogin.loginDisplay();
                 break;
             default:
                 System.out.println("Invalid Command");

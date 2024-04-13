@@ -1,9 +1,13 @@
 package websocket;
 
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
+import model.Game;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import webSocketMessages.serverMessages.*;
 
 import javax.websocket.*;
@@ -11,6 +15,9 @@ import java.net.URI;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
+import webSocketMessages.userCommands.ObservePlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 
@@ -20,6 +27,8 @@ public class WebSocketFacade extends Endpoint{
     NotificationHandler notificationHandler;
 
     public AuthToken authToken;
+
+    ChessGame game;
 
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
@@ -33,7 +42,7 @@ public class WebSocketFacade extends Endpoint{
 
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-//                @Override
+                @Override
                 public void onMessage(String message) {
                     Notification notification = new Gson().fromJson(message, Notification.class);
                     notificationHandler.notify(notification);
@@ -48,11 +57,19 @@ public class WebSocketFacade extends Endpoint{
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinUser(String gameID, String playerColor, AuthToken authToken) throws ResponseException{
+    public ChessGame getGame(){
+        return game;
+    }
+
+    public void joinUser(String gameID, ChessGame.TeamColor playerColor, AuthToken authToken) throws ResponseException{
         try {
-            var userGameCommand = new UserGameCommand(authToken.getToken());
+            var joinPlayer = new JoinPlayer(authToken.getToken());
+            joinPlayer.setGameID(gameID);
+            joinPlayer.setUser(authToken.getToken());
+            joinPlayer.setPlayerColor(playerColor);
+
             this.authToken = authToken;
-            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+            this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -60,9 +77,9 @@ public class WebSocketFacade extends Endpoint{
 
     public void joinObserve(String gameID, String playerColor, AuthToken authToken) {
         try {
-            var userGameCommand = new UserGameCommand(authToken.getToken());
+            var joinPlayer = new JoinPlayer(authToken.getToken());
             this.authToken = authToken;
-            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+            this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,9 +87,9 @@ public class WebSocketFacade extends Endpoint{
 
     public void makeMove(int row, int col, AuthToken authToken){
         try {
-            var userGameCommand = new UserGameCommand(authToken.getToken());
+            var make = new MakeMove(authToken.getToken());
             this.authToken = authToken;
-            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+            this.session.getBasicRemote().sendText(new Gson().toJson(make));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

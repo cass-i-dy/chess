@@ -224,6 +224,10 @@ public class ChessPiece {
         }
     }
 
+    public void runLongMoves(int row, int col){
+
+    }
+
     public void rookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
 
         // Up

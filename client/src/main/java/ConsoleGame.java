@@ -12,22 +12,25 @@ import static ui.EscapeSequences.*;
 
 public class ConsoleGame {
 
-    private static String EMPTY = "  ";
+    private static final String EMPTY = "  ";
 
     public static Boolean reversed = false;
 
-    public static Boolean print_white = true;
+    public static Boolean printWhite = true;
 
     private static final int SQUARE_SIZE_IN_CHARS = 1;
 
-    private static ChessBoard board;
+    private static ChessBoard board = new ChessBoard();
 
     private static String team;
 
     public static ServerClient serverClient;
 
+    public static String id;
 
-    public static void start(ServerClient server, String color) throws ResponseException {
+
+
+    public static void start(ServerClient server, String gameID, String color) throws ResponseException {
         serverClient = server;
         if (color.equalsIgnoreCase("BLACK")) {
             reversed = true;
@@ -35,28 +38,34 @@ public class ConsoleGame {
         }
         else{
         team = "WHITE";}
+        id = gameID;
+//        board = serverClient.getChessGame().getBoard()
+//        serverClient.processNotification();
+
+        printGame(board);
+        displayOptions();
     }
 
     public static void displayOptions() throws ResponseException {
-
             System.out.println("Type 'help' to see game options");
             String option = ConsolePostLogin.scanner.nextLine();
             String[] parts = option.split("\\s+");
             processGameAction(parts);
+
         }
 
 
     public static void processGameAction(String[] option) throws ResponseException {
         switch (option[0].toLowerCase()) {
             case "redraw":
-                printGame(option, team);
+                printGame(board);
                 displayOptions();
                 break;
             case "leave":
-                ConsolePostLogin.gameDisplay();
+                ConsolePostLogin.start(serverClient);
                 break;
             case "make":
-                break;
+                serverClient.makeMove(option);
             case "resign":
                 ConsolePostLogin.gameDisplay();
                 break;
@@ -69,17 +78,12 @@ public class ConsoleGame {
         }
     }
 
-    public static void printGame(String[] args, String color) {
+    public static void printGame(ChessBoard board) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        board = new ChessBoard();
-        board.resetBoard();
         out.print(ERASE_SCREEN);
-
         drawHeaders(out);
         drawChessBoard(out);
-
-
-
+        printWhiteText(out);
     }
 
 
@@ -124,23 +128,23 @@ public class ConsoleGame {
             }
             setDarkGrey(out);
             out.println();
-            print_white = !print_white;
+            printWhite = !printWhite;
         }
     }
 
     private static void printSquare(PrintStream out, int row, int col){
-        if (print_white) {
+        if (printWhite) {
             out.print(SET_BG_COLOR_GREEN);
             checkPiece(out, row, col);
             setGreen(out);
-            print_white = false;
+            printWhite = false;
 
         }
         else {
             out.print(SET_BG_COLOR_BLACK);
             checkPiece(out, row, col);
             setBlack(out);
-            print_white = true;
+            printWhite = true;
         }
         out.print(EMPTY.repeat(SQUARE_SIZE_IN_CHARS));
     }
@@ -216,6 +220,10 @@ public class ConsoleGame {
         out.print(SET_TEXT_COLOR_RED);
         out.print(player);
         setGreen(out);
+    }
+
+    private static void printWhiteText(PrintStream out){
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void printBluePlayer(PrintStream out, String player) {

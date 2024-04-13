@@ -21,7 +21,7 @@ public class SessionManager {
 
     public void joinAdd(String username, String authToken, String gameID, ChessGame.TeamColor playerColor, Session session) {
         var connection = new Connection();
-        connection.Connection(authToken, session);
+        connection.makeConnection(authToken, session);
         if (connections.get(gameID) == null) {
             connections.put(gameID, new HashSet<>());
         }
@@ -31,7 +31,7 @@ public class SessionManager {
 
     public void observeAdd(String username, String authToken, String gameID, Session session) {
         var connection = new Connection();
-        connection.Connection(authToken, session);
+        connection.makeConnection(authToken, session);
         if (connections.get(gameID) == null) {
             connections.put(gameID, new HashSet<>());
         }
