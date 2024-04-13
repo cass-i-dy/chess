@@ -184,15 +184,7 @@ public class Server {
             return new Gson().toJson(Map.of("games", games));
         }
         catch (DataAccessException e) {
-            var message = e.getMessage();
-            if (message.equals("Error: unauthorized")) {
-                res.status(401);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-            }
-            else {
-                res.status(500);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-            }
+            return returnError(e, res);
         }
     }
 
