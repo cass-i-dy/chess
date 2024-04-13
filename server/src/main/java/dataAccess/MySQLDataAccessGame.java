@@ -50,7 +50,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
                 ps.setString(1, gameName);
                 try(var rs = ps.executeQuery()) {
                     if (rs.next()){
-                        Game game = readGame(rs);
+                        Game game = readGame(rs, true);
                         assert game != null;
                         return game.getGameID();
                     }
@@ -63,19 +63,20 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
         return null;
     }
 
-    private Game readGame(ResultSet rs) throws SQLException {
+    private Game readGame(ResultSet rs, Boolean all) throws SQLException {
         String gameName = rs.getString("gamename");
         String gameID = rs.getString("gameID");
         String whiteUserName = rs.getString("whiteusername");
         String blackUserName = rs.getString("blackusername");
-        String victor = rs.getString("victor");
-        String chessGame = rs.getString("gameobject");
+        Game game = new Game(gameName, gameID, whiteUserName, blackUserName);
         if (gameName == null || gameID == null){
             return null;
         }
-        Game game = new Game(gameName, gameID, whiteUserName, blackUserName);
+        if (all) {
+        String victor = rs.getString("victor");
+        String chessGame = rs.getString("gameobject");
         game.setVictor(victor);
-        game.updateChessGame(new Gson().fromJson(chessGame, ChessGame.class));
+        game.updateChessGame(new Gson().fromJson(chessGame, ChessGame.class));}
         return game;
     }
 
@@ -88,7 +89,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
                 ps.setString(1, gameName);
                 try(var rs = ps.executeQuery()) {
                     if (rs.next()){
-                        Game game = readGame(rs);
+                        Game game = readGame(rs, true);
                         return game != null;
                     }
                 }
@@ -109,7 +110,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
                 ps.setString(1, gameID);
                 try(var rs = ps.executeQuery()) {
                     if (rs.next()){
-                        return readGame(rs);
+                        return readGame(rs, true);
                     }
                 }
             }
@@ -158,7 +159,7 @@ public class MySQLDataAccessGame extends MySQLDataAccess implements DataAccessGa
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        result.add(readGame(rs));
+                        result.add(readGame(rs, false));
                     }
                 }
             }

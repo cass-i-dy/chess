@@ -19,24 +19,21 @@ public class SessionManager {
 
 //    public final HashMap<String, Set<>>
 
-    public void joinAdd(String username, String authToken, String gameID, ChessGame.TeamColor playerColor, Session session) {
+    public void addPlayer(String authToken, String gameID, Session session){
         var connection = new Connection();
         connection.makeConnection(authToken, session);
         if (connections.get(gameID) == null) {
             connections.put(gameID, new HashSet<>());
         }
         connections.get(gameID).add(connection);
+    }
 
+    public void joinAdd(String username, String authToken, String gameID, ChessGame.TeamColor playerColor, Session session) {
+        addPlayer(authToken, gameID, session);
     }
 
     public void observeAdd(String username, String authToken, String gameID, Session session) {
-        var connection = new Connection();
-        connection.makeConnection(authToken, session);
-        if (connections.get(gameID) == null) {
-            connections.put(gameID, new HashSet<>());
-        }
-        connections.get(gameID).add(connection);
-
+        addPlayer(authToken, gameID, session);
     }
 
     public void leave(String authToken, String gameID) {
@@ -58,44 +55,39 @@ public class SessionManager {
     }
 
     public void broadcast(String excludeAuthToken, Notification notification, String gameID) throws IOException {
+        cast(excludeAuthToken, notification, true, gameID);
+    }
+
+    public void cast(String excludeVisitorName, Notification notification, Boolean all, String gameID) throws IOException {
         var removeList = new ArrayList<Connection>();
         var gameConnections = connections.get(gameID);
         if (gameConnections != null){
             for (var c : gameConnections) {
                 if (c.session.isOpen()) {
-                    if (!c.authToken.equals(excludeAuthToken)) {
+                    if (all){
+                    if (!c.authToken.equals(excludeVisitorName)) {
                         c.send(notification.toString());
+                    }}
+                    else {
+                        if (c.authToken.equals(excludeVisitorName)) {
+                            c.send(notification.toString());
+                        }
                     }
                 } else {
                     removeList.add(c);
                 }
 
-        }
-        }
+            }
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.authToken);
         }
-    }
+    }}
 
-    public void broadcastOnce(String excludeVisitorName, Notification notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var game : connections.values()) {
-            for (var c : game)
-                if (c.session.isOpen()) {
-                    if (c.authToken.equals(excludeVisitorName)) {
-                        c.send(notification.toString());
-                    }
-                } else {
-                    removeList.add(c);
-                }
-        }
+    public void broadcastOnce(String excludeVisitorName, Notification notification, String gameID) throws IOException {
+        cast(excludeVisitorName, notification, false, gameID);
 
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.authToken);
-        }
     }
 }
 

@@ -88,11 +88,11 @@ public class WebSocketHandler {
             var gameObject = gameAccess.getGame(joinPlayer.gameID);
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
-            connections.broadcastOnce(authToken.getToken(), response);
+            connections.broadcastOnce(authToken.getToken(), response, joinPlayer.gameID);
         } catch (Exception e) {
             connections.joinAdd("", joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
-            connections.broadcastOnce(joinPlayer.authToken, response);
+            connections.broadcastOnce(joinPlayer.authToken, response, joinPlayer.gameID);
             connections.remove(joinPlayer.gameID);}
     }
 
@@ -122,13 +122,13 @@ public class WebSocketHandler {
             var gameObject = gameAccess.getGame(joinPlayer.gameID);
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
-            connections.broadcastOnce(authToken.getToken(), response);
+            connections.broadcastOnce(authToken.getToken(), response, joinPlayer.gameID);
 
         }
         catch (Exception e){
             connections.observeAdd("", joinPlayer.authToken, joinPlayer.gameID, session);
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
-            connections.broadcastOnce(joinPlayer.authToken, response);
+            connections.broadcastOnce(joinPlayer.authToken, response, joinPlayer.gameID);
             connections.remove(joinPlayer.gameID);
         }
         return diplayGame;
@@ -184,12 +184,12 @@ public class WebSocketHandler {
             String gameMessage = new Gson().toJson(gameObject, Game.class);
             var response = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, message, gameMessage);
             connections.broadcast(authToken.getToken(), response, possibleMove.gameID);
-            connections.broadcastOnce(authToken.getToken(), response);
+            connections.broadcastOnce(authToken.getToken(), response, possibleMove.gameID);
         }
 
         catch (Exception e) {
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
-            connections.broadcastOnce(possibleMove.authToken, response);
+            connections.broadcastOnce(possibleMove.authToken, response, possibleMove.gameID);
         }
         return diplayGame;
     }
@@ -235,14 +235,14 @@ public class WebSocketHandler {
             var message = String.format(authToken.getName() + " has resigned");
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken.getToken(), notification, resign.gameID);
-            connections.broadcastOnce(authToken.getToken(), notification);}
+            connections.broadcastOnce(authToken.getToken(), notification, resign.gameID);}
             else{
                 throw new WebsocketException("not allowed");
             }
         }
         catch (Exception e){
             var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
-            connections.broadcastOnce(resign.authToken, response);
+            connections.broadcastOnce(resign.authToken, response, resign.gameID);
         }}}
 
 

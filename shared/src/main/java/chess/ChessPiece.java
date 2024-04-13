@@ -104,6 +104,18 @@ public class ChessPiece {
 
     }
 
+    public void diagonalPawnMove(ChessBoard board, ChessPosition myPosition, ChessPosition position, Collection<ChessMove> moves){
+        if (!isEmpty(board, position)){
+            if (!isTeam(board, position)){
+                if (isPromotion(myPosition, position, moves)){
+                    promotion(myPosition, position, moves);
+                } else {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
+        }
+    }
+
     public void pawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
         row = myPosition.getRow();
         col = myPosition.getColumn();
@@ -137,31 +149,13 @@ public class ChessPiece {
             // Diagonal Right
             if (isValid(row+1, col+1)){
                 position = new ChessPosition(row+1, col+1);
-                if (!isEmpty(board, position)){
-                    if (!isTeam(board, position)){
-                        if (isPromotion(myPosition, position, moves)){
-                            promotion(myPosition, position, moves);
-                        } else {
-                            moves.add(new ChessMove(myPosition, position, null));
-                        }
-                    }
-                }
-
+                diagonalPawnMove(board, myPosition, position, moves);
             }
 
             // Diagonal Left
             if (isValid(row+1, col-1)){
                 position = new ChessPosition(row+1, col-1);
-                if (!isEmpty(board, position)){
-                    if (!isTeam(board, position)){
-                        if (isPromotion(myPosition, position, moves)){
-                            promotion(myPosition, position, moves);
-                        } else {
-                            moves.add(new ChessMove(myPosition, position, null));
-                        }
-                    }
-                }
-
+                diagonalPawnMove(board, myPosition, position, moves);
             }
         }
 
@@ -195,37 +189,33 @@ public class ChessPiece {
             // Diagonal Left
             if (isValid(row-1, col-1)){
                 position = new ChessPosition(row-1, col-1);
-                if (!isEmpty(board, position)){
-                    if (!isTeam(board, position)){
-                        if (isPromotion(myPosition, position, moves)){
-                            promotion(myPosition, position, moves);
-                        } else {
-                            moves.add(new ChessMove(myPosition, position, null));
-                        }
-                    }
-                }
-
+                diagonalPawnMove(board, myPosition, position, moves);
             }
 
             // Diagonal Right
             if (isValid(row-1, col+1)){
                 position = new ChessPosition(row-1, col+1);
-                if (!isEmpty(board, position)){
-                    if (!isTeam(board, position)){
-                        if (isPromotion(myPosition, position, moves)){
-                            promotion(myPosition, position, moves);
-                        } else {
-                            moves.add(new ChessMove(myPosition, position, null));
-                        }
-                    }
-                }
-
+                diagonalPawnMove(board, myPosition, position, moves);
             }
         }
     }
 
-    public void runLongMoves(int row, int col){
-
+    public Boolean runLongMoves(ChessBoard board, ChessPosition myPosition, int row, int col, Collection<ChessMove> moves){
+        if (!isValid(row,col)){
+            return false;
+        }
+        ChessPosition position = new ChessPosition(row, col);
+        if (!isEmpty(board, position)){
+            if (isTeam(board, position)){
+                return false;
+            }
+            else{
+                moves.add(new ChessMove(myPosition, position, null));
+                return false;
+            }
+        }
+        moves.add(new ChessMove(myPosition, position, null));
+        return true;
     }
 
     public void rookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
@@ -234,85 +224,34 @@ public class ChessPiece {
         for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn();
-            if (!isValid(row,col)){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
             }
-            ChessPosition position = new ChessPosition(row, col);
-            if (!isEmpty(board, position)){
-                if (isTeam(board, position)){
-                    break;
-                }
-                else{
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-
         }
 
         // Down
         for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn();
-            if (!isValid(row,col)){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
-            }
-            ChessPosition position = new ChessPosition(row, col);
-            if (!isEmpty(board, position)){
-                if (isTeam(board, position)){
-                    break;
-                }
-                else{
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-
-        }
+            }        }
 
         // Right
         for (int i=1; i<9; i++){
             row = myPosition.getRow();
             col = myPosition.getColumn() + i;
-            if (!isValid(row,col)){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
-            }
-            ChessPosition position = new ChessPosition(row, col);
-            if (!isEmpty(board, position)){
-                if (isTeam(board, position)){
-                    break;
-                }
-                else{
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-
-        }
+            }        }
 
         // Left
         for (int i=1; i<9; i++){
             row = myPosition.getRow();
             col = myPosition.getColumn() - i;
-            if (!isValid(row,col)){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
-            }
-            ChessPosition position = new ChessPosition(row, col);
-            if (!isEmpty(board, position)){
-                if (isTeam(board, position)){
-                    break;
-                }
-                else{
-                    moves.add(new ChessMove(myPosition, position, null));
-                    break;
-                }
-            }
-            moves.add(new ChessMove(myPosition, position, null));
-
-        }
+            }        }
     }
 
 
