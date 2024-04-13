@@ -5,9 +5,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
-import model.Game;
-import org.eclipse.jetty.websocket.server.WebSocketHandler;
-import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import webSocketMessages.serverMessages.*;
 
 import javax.websocket.*;
@@ -17,8 +14,6 @@ import java.net.URISyntaxException;
 
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.ObservePlayer;
-import webSocketMessages.userCommands.UserGameCommand;
 
 
 public class WebSocketFacade extends Endpoint{
@@ -53,7 +48,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-//    @Override
+    //    @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
