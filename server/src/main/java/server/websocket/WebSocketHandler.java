@@ -245,21 +245,3 @@ public class WebSocketHandler {
             connections.broadcastOnce(resign.authToken, response, resign.gameID);
         }}}
 
-
-//    private void exit(String gameID) throws IOException {
-//        connections.remove(gameID);
-//        var message = String.format("%s left the shop", gameID);
-//        var notification = new Notification(Notification.Type.DEPARTURE, message);
-//        connections.broadcast(gameID, notification);
-//    }
-//
-//    public void makeNoise(String petName, String sound) throws ResponseException {
-//        try {
-//            var message = String.format("%s says %s", petName, sound);
-//            var notification = new Notification(Notification.Type.NOISE, message);
-//            connections.broadcast("", notification);
-//        } catch (Exception ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
-//}

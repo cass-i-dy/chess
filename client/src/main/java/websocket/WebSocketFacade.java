@@ -48,7 +48,7 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    //    @Override
+    @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 

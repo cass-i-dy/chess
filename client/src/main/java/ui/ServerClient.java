@@ -170,10 +170,6 @@ public class ServerClient extends NotificationHandler {
         }
     }
 
-    public int getLetterCol(String character){
-        List<String> characters = new ArrayList<>(List.of("a", "b", "c", "d", "e", "f", "g", "h"));
-        return 1;
-    }
 
 
     public String help(String menu) {

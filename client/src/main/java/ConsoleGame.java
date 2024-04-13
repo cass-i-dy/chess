@@ -89,13 +89,13 @@ public class ConsoleGame {
 
     public static void drawHeaders(PrintStream out) {
 
-        String[] letter_headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String[] letterHeaders = {"a", "b", "c", "d", "e", "f", "g", "h"};
         if (reversed){
-            Collections.reverse(Arrays.asList(letter_headers));
+            Collections.reverse(Arrays.asList(letterHeaders));
         }
         drawHeader(out, " ");
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
-            drawHeader(out, letter_headers[boardCol]);
+            drawHeader(out, letterHeaders[boardCol]);
         }
         setDarkGrey(out);
         out.println();
