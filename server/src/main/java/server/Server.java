@@ -73,6 +73,20 @@ public class Server {
 
     }
 
+    public Object returnError(Exception e, Response res){
+        var message = e.getMessage();
+        if (message.equals("Error: unauthorized")){
+            res.status(401);
+            return new Gson().toJson(Map.of("message", e.getMessage()));
+
+        }
+        else {
+            res.status(500);
+            return new Gson().toJson(Map.of("message", e.getMessage()));
+        }
+    }
+
+
     // Login the User
     public Object loginHandler(Request req, Response res) {
         try {
@@ -82,17 +96,7 @@ public class Server {
             return new Gson().toJson(authToken);
         }
         catch (DataAccessException e){
-            var message = e.getMessage();
-            if (message.equals("Error: unauthorized")){
-                res.status(401);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-
-            }
-            else {
-                res.status(500);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-
-            }
+            return returnError(e, res);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -108,16 +112,7 @@ public class Server {
             return "{}";
         }
         catch (DataAccessException e){
-            var message = e.getMessage();
-            if (message.equals("Error: unauthorized")) {
-                res.status(401);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-            }
-            else {
-                res.status(500);
-                return new Gson().toJson(Map.of("message", e.getMessage()));
-
-            }
+            return returnError(e, res);
         }
     }
 

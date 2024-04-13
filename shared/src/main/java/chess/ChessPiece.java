@@ -293,32 +293,13 @@ public class ChessPiece {
             kMoves(board, myPosition, row, col, moves);
     }}
 
-
-    public Boolean diagonalMoves(ChessBoard board, ChessPosition myPosition, int row, int col, Collection<ChessMove> moves){
-        if (!isValid(row,col)){
-            return false;
-        }
-        ChessPosition position = new ChessPosition(row, col);
-        if (!isEmpty(board, position)){
-            if (isTeam(board, position)){
-                return false;
-            }
-            else{
-                moves.add(new ChessMove(myPosition, position, null));
-                return false;
-            }
-        }
-        moves.add(new ChessMove(myPosition, position, null));
-        return true;
-    }
-
     public void bishopMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves){
 
         // Diagonal Upper Right;
         for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn() + i;
-            if (!(diagonalMoves(board, myPosition, row, col, moves))){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
             }
         }
@@ -327,7 +308,7 @@ public class ChessPiece {
         for (int i=1; i<9; i++){
             row = myPosition.getRow() + i;
             col = myPosition.getColumn() - i;
-            if (!(diagonalMoves(board, myPosition, row, col, moves))){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
             }
         }
@@ -336,7 +317,7 @@ public class ChessPiece {
         for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() + i;
-            if (!(diagonalMoves(board, myPosition, row, col, moves))){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
             }
         }
@@ -345,7 +326,7 @@ public class ChessPiece {
         for (int i=1; i<9; i++){
             row = myPosition.getRow() - i;
             col = myPosition.getColumn() - i;
-            if (!(diagonalMoves(board, myPosition, row, col, moves))){
+            if (!(runLongMoves(board, myPosition, row, col, moves))){
                 break;
             }
     }}
