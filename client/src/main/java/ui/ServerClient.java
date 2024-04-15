@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
@@ -23,10 +25,15 @@ public class ServerClient extends NotificationHandler {
 
     public ChessGame chessGame;
 
+    public WebSocketFacade ws;
 
-    public ServerClient(String serverUrl) {
+
+
+    public ServerClient(String serverUrl) throws ResponseException {
         serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.ws = new WebSocketFacade(serverUrl, this);
+
     }
 
     public ChessGame getChessGame(){
@@ -123,7 +130,7 @@ public class ServerClient extends NotificationHandler {
         }
         if (params.length == 2) {
             System.out.println("observing game");
-            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+//            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
             ws.joinObserve(params[1], "WHITE", authToken);
             return true;
         } else {
@@ -143,8 +150,7 @@ public class ServerClient extends NotificationHandler {
                 game.setPlayerColor("BLACK");
                 try {
                     serverFacade.join(game);
-                    WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-                    ws.joinUser(params[1], ChessGame.TeamColor.BLACK, authToken);
+//                    ws.joinUser(params[1], ChessGame.TeamColor.BLACK, authToken);
                     chessGame = ws.getGame();
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
@@ -156,20 +162,33 @@ public class ServerClient extends NotificationHandler {
         return true;
     }
 
-    public void makeMove(String... params){
-        if (params.length < 4){
-            System.out.println("too few arguments");}
-        int row = Integer.parseInt(params[2]);
-        int col = Integer.parseInt(params[3]);
-//        serverFacade.update(row, col)
+    public void makeMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion){
         try {
         WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-        ws.makeMove(row, col, authToken);}
+        ws.makeMove(startPosition, endPosition, promotion,  authToken);}
         catch (Exception e) {
             System.out.println("invalid");
         }
     }
 
+    public void leave(String id){
+        try {
+            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+            ws.leave(id);
+        } catch (Exception e){
+            System.out.println("invalid");
+        }
+    }
+
+    public void resign(String id){
+        try {
+            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+            ws.resign(id);
+        }
+        catch (Exception e){
+            System.out.println("Error");
+        }
+    }
 
 
     public String help(String menu) {

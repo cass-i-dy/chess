@@ -12,4 +12,8 @@ public class MakeMove extends UserGameCommand {
     public MakeMove(String authToken) {
         super(authToken);
     }
+
+    public void setChessMove(ChessMove chessMove){
+        this.move = chessMove;
+    }
 }

@@ -2,6 +2,9 @@ package websocket;
 
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
@@ -13,7 +16,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.LeaveGame;
 import webSocketMessages.userCommands.MakeMove;
+import webSocketMessages.userCommands.ResignGame;
 
 
 public class WebSocketFacade extends Endpoint{
@@ -80,13 +85,34 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void makeMove(int row, int col, AuthToken authToken){
+    public void makeMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion, AuthToken authToken){
         try {
             var make = new MakeMove(authToken.getToken());
+            make.setChessMove(new ChessMove(startPosition, endPosition, promotion));
             this.authToken = authToken;
             this.session.getBasicRemote().sendText(new Gson().toJson(make));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void leave(String gameID) {
+        try{
+        var leaveGame = new LeaveGame(authToken.getToken());
+        leaveGame.setGameID(gameID);
+        this.session.getBasicRemote().sendText(new Gson().toJson(leaveGame));}
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void resign(String gameID) {
+        try {
+            var resignGame = new ResignGame(gameID);
+            resignGame.setGameID(gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(resignGame));}
+        catch (IOException e) {
+            throw new RuntimeException(e);
+    }
     }
 }
