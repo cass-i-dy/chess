@@ -1,3 +1,5 @@
+package ui;
+
 import exception.ResponseException;
 
 import java.io.PrintStream;
@@ -5,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
 import chess.*;
 import ui.ServerClient;
@@ -25,7 +28,7 @@ public class ConsoleGame {
 
     private static final int SQUARE_SIZE_IN_CHARS = 1;
 
-    private static ChessBoard board = new ChessBoard();
+//    private static ChessBoard board = new ChessBoard();
 
     private static String team;
 
@@ -33,8 +36,11 @@ public class ConsoleGame {
 
     public static String id;
 
-    public static Collection<ChessMove> moves;
-    public static ChessPosition startPosition;
+    public static Collection<ChessPosition> positions = new HashSet<>() {
+    };
+    public static ChessPosition startPosition = null;
+
+    public static ChessGame chessGame = new ChessGame();
 
 
 
@@ -47,17 +53,16 @@ public class ConsoleGame {
         else{
         team = "WHITE";}
         id = gameID;
-//        board = serverClient.getChessGame().getBoard();
-//        printGame(board);
-//        serverClient.processNotification();
+//        board.resetBoard();
+//        chessGame.setBoard(board);
+//        printGame(serverClient.getChessGame().getBoard());
         displayOptions();
-
     }
 
     public static void displayOptions() throws ResponseException {
 //        board = serverClient.getChessGame().getBoard();
 //        printGame(board);
-        System.out.println(serverClient.getNotification().toString());
+//        System.out.println(serverClient.getNotification().toString());
 //            processNotification(serverClient.getNotification());
             System.out.println("Type 'help' to see game options");
             String option = ConsolePostLogin.scanner.nextLine();
@@ -66,18 +71,11 @@ public class ConsoleGame {
 
         }
 
-//    public static void processNotification(Notification notification){
-//        System.out.println(notification.getMessage());
-//        if (notification.getServerMessageType() == LOAD_GAME){
-//            LoadGame loadGame = notification.getServerMessageType();
-//        }
-//    }
-
 
     public static void processGameAction(String[] option) throws ResponseException {
         switch (option[0].toLowerCase()) {
             case "redraw":
-                printGame(board);
+                printGame(serverClient.getChessGame().getBoard());
                 displayOptions();
                 break;
             case "leave":
@@ -96,40 +94,83 @@ public class ConsoleGame {
                 break;
             default:
                 System.out.print("Invalid Option");
+                displayOptions();
+                break;
         }
     }
 
     public static void makeDisplay() throws ResponseException {
+        ChessPosition tempPosition;
         System.out.println("Chess Piece Starting Position: ");
         String startOption = ConsolePostLogin.scanner.nextLine();
         String[] startParts = startOption.split("\\s+");
-
         if (startParts.length < 2){
-            System.out.println("Select Chess Piece position <row> <col>");
+            System.out.println("Select Chess Piece position <letter> <number>");
             makeDisplay();
         }
-        ChessPosition startPosition = new ChessPosition(Integer.parseInt(startParts[0]), Integer.parseInt(startParts[1]));
-        ChessPiece chessPiece = board.getPiece(startPosition);
-        viewPossibleMoves(startPosition);
+        if (!reversed) {
+            int startCol = colInt(startParts[0]);
+            tempPosition = new ChessPosition(9 - Integer.parseInt( startParts[1]), startCol);
+        }
+        else{
+            int startCol = colInt(startParts[0]);
+            tempPosition = new ChessPosition(Integer.parseInt( startParts[1]), startCol);
+        }
+        ChessPiece chessPiece = serverClient.getChessGame().getBoard().getPiece(tempPosition);
+        viewPossibleMoves(tempPosition);
         System.out.println("Ending position: ");
         String endOption = ConsolePostLogin.scanner.nextLine();
         String[] endParts = endOption.split("\\s+");
-        if (endParts.length < 2){
-            System.out.println("Select Valid Move <row> <col>");
+        if (endParts[0].equalsIgnoreCase("none")){
+            makeDisplay();
         }
-        ChessPosition endPosition = new ChessPosition(Integer.parseInt(endParts[0]), Integer.parseInt(endParts[1]));
-        serverClient.makeMove(startPosition,endPosition, chessPiece.getPieceType());
+        if (endParts.length < 2){
+            System.out.println("Select Valid Move <letter> <number> or <empty>");
+            makeDisplay();
+        }
+        int endCol = colInt(endParts[0]);
+        ChessPosition endPosition = new ChessPosition(Integer.parseInt(endParts[1]), endCol);
+        serverClient.makeMove(tempPosition,endPosition, chessPiece.getPieceType());
         displayOptions();
     }
 
+    public static int colInt(String letter){
+        switch (letter.toLowerCase()){
+            case "a":
+                return 1;
+            case "b":
+                return 2;
+            case "c":
+                return 3;
+            case "d":
+                return 4;
+            case "e":
+                return 5;
+            case "f":
+                return 6;
+            case "g":
+                return 7;
+            case "h":
+                return 8;
+        }
+        return 0;
+    }
+
     public static void viewPossibleMoves(ChessPosition position){
-        ChessGame chessGameMoves = new ChessGame();
-        moves = chessGameMoves.validMoves(position);
+        Collection<ChessMove> moves = serverClient.chessGame.validMoves(position);
+        getAllPositions(moves);
         startPosition = position;
-        printGame(board);
-        moves = null;
+        printGame(serverClient.getChessGame().getBoard());
+        positions = new HashSet<>();
         startPosition = null;
 
+    }
+
+    public static void getAllPositions(Collection<ChessMove> moves) {
+        for (ChessMove move : moves) {
+            ChessPosition possibleMove = move.getEndPosition();
+            positions.add(possibleMove);
+        }
     }
 
     public static void printGame(ChessBoard board) {
@@ -178,23 +219,20 @@ public class ConsoleGame {
         for (int boardRow = 0; boardRow < 8; ++boardRow){
             colNumbers(out, boardRow);
             for (int boardCol = 0; boardCol < 8; ++boardCol) {
-                if (!(moves == null)){
-                for (ChessMove move : moves){
-                    ChessPosition possibleMove = move.getEndPosition();
-                    int possibleRow = possibleMove.getRow();
-                    int possibleCol = possibleMove.getColumn();
-                    if ((possibleRow == boardRow) && (possibleCol == boardCol)){
-                        printSquare(out, boardRow, boardCol, true);
+                if (!(positions.isEmpty())) {
+                    ChessPosition testPosition = new ChessPosition(boardRow+1, boardCol+1);
+                    if (positions.contains(testPosition)) {
+                        printSquare(out, boardRow, boardCol, "YES");
                     }
-                    else if ((possibleRow == startPosition.getRow()) && (possibleCol == startPosition.getColumn())){
-                        printSquare(out, boardRow, boardCol, false);
+                    else if ((testPosition.getRow() == startPosition.getRow()) && (testPosition.getColumn() == startPosition.getColumn())){
+                        printSquare(out, boardRow, boardCol, "NO");
                     }
                     else {
-                        printSquare(out, boardRow, boardCol, true);
+                        printSquare(out, boardRow, boardCol, "");
                     }
-                }}
+                }
                 else {
-                    printSquare(out, boardRow, boardCol, true);
+                    printSquare(out, boardRow, boardCol, "");
                 }
             }
             setDarkGrey(out);
@@ -203,18 +241,25 @@ public class ConsoleGame {
         }
     }
 
-    private static void printSquare(PrintStream out, int row, int col, Boolean option){
-        if (option){
+    private static void printSquare(PrintStream out, int row, int col, String option){
+        if (option.equals("YES")){
+            if (printWhite){
             out.print(SET_BG_COLOR_YELLOW);
             checkPiece(out, row, col);
-            setGreen(out);
-            printWhite = false;
+            setYellow(out);
+            printWhite = false;}
+            else {
+                out.print(SET_BG_COLOR_MAGENTA);
+                checkPiece(out, row, col);
+                setMagenta(out);
+                printWhite = true;
+            }
         }
-        else if (!option){
+        else if (option.equals("NO")){
             out.print(SET_BG_COLOR_LIGHT_GREY);
             checkPiece(out, row, col);
-            setGreen(out);
-            printWhite = false;
+            setLightGrey(out);
+            printWhite = !printWhite;
         }
         else if (printWhite) {
             out.print(SET_BG_COLOR_GREEN);
@@ -234,11 +279,11 @@ public class ConsoleGame {
     private static void checkPiece(PrintStream out, int row, int col){
         ChessPiece piece;
         if (!reversed){
-            piece = board.getPiece(new ChessPosition(8-row, 8-col));
+            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(8-row, 8-col));
 
         }
         else {
-            piece = board.getPiece(new ChessPosition(row + 1, col + 1));
+            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(row + 1, col + 1));
         }
         if (piece == null) {
             printRedPlayer(out, " ");
@@ -279,7 +324,7 @@ public class ConsoleGame {
 
     private static void colNumbers(PrintStream out, int boardRow){
         String number;
-        if (reversed) {
+        if (!reversed) {
             number = String.valueOf(8- boardRow);
         }
         else {
@@ -297,6 +342,22 @@ public class ConsoleGame {
         out.print(SET_BG_COLOR_GREEN);
         out.print(SET_TEXT_COLOR_GREEN);
     }
+
+    private static void setYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
+        out.print(SET_TEXT_COLOR_YELLOW);
+    }
+
+    private static void setMagenta(PrintStream out) {
+        out.print(SET_BG_COLOR_MAGENTA);
+        out.print(SET_TEXT_COLOR_MAGENTA);
+    }
+
+    private static void setLightGrey(PrintStream out) {
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_LIGHT_GREY);
+    }
+
 
     private static void printRedPlayer(PrintStream out, String player) {
         out.print(SET_TEXT_COLOR_RED);

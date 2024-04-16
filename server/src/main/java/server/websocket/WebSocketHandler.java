@@ -1,13 +1,10 @@
 package server.websocket;
 
-import chess.ChessBoard;
 import chess.ChessGame;
-import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySQLDataAccessAuth;
 import dataAccess.MySQLDataAccessGame;
-import exception.ResponseException;
 import exception.WebsocketException;
 import model.AuthToken;
 import model.Game;
@@ -16,7 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 //import org.eclipse.jetty.websocket.client.io.ConnectionManager;
 //import org.eclipse.jetty.websocket.client.io.ConnectionManager;
-import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -91,7 +88,7 @@ public class WebSocketHandler {
             connections.broadcastOnce(authToken.getToken(), response, joinPlayer.gameID);
         } catch (Exception e) {
             connections.joinAdd("", joinPlayer.authToken, joinPlayer.gameID, joinPlayer.playerColor, session);
-            var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
+            var response = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(joinPlayer.authToken, response, joinPlayer.gameID);
             connections.remove(joinPlayer.gameID);}
     }
@@ -127,7 +124,7 @@ public class WebSocketHandler {
         }
         catch (Exception e){
             connections.observeAdd("", joinPlayer.authToken, joinPlayer.gameID, session);
-            var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
+            var response = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(joinPlayer.authToken, response, joinPlayer.gameID);
             connections.remove(joinPlayer.gameID);
         }
@@ -188,7 +185,7 @@ public class WebSocketHandler {
         }
 
         catch (Exception e) {
-            var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
+            var response = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(possibleMove.authToken, response, possibleMove.gameID);
         }
         return diplayGame;
@@ -241,7 +238,7 @@ public class WebSocketHandler {
             }
         }
         catch (Exception e){
-            var response = new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage());
+            var response = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
             connections.broadcastOnce(resign.authToken, response, resign.gameID);
         }}}
 

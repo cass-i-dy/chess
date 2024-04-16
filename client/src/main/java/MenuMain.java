@@ -1,8 +1,8 @@
 import chess.ChessGame;
 import chess.ChessPiece;
 import exception.ResponseException;
+import ui.ConsolePreLogin;
 import ui.ServerClient;
-import websocket.NotificationHandler;
 
 public class MenuMain{
         public static void main(String[] args) throws ResponseException {

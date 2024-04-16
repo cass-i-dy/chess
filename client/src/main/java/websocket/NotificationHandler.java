@@ -1,14 +1,16 @@
 package websocket;
 
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 
 public class NotificationHandler {
-    Notification notification;
-    void notify(Notification notification){
-        this.notification = notification;
-//        System.out.println(notification.toString());
-    }
+    protected Notification notification;
 
+//    public void notify(){
+//
+//    }
+//
     public Notification getNotification() {
         try {
         while (notification == null){
@@ -21,6 +23,15 @@ public class NotificationHandler {
     }
 
 
+    public void notify(Notification notification) {
+    }
 
+    public void loadGameNotify(LoadGame loadGame){
+
+    }
+
+    public void errorNotify(ErrorMessage errorMessage){
+
+    }
 }
 

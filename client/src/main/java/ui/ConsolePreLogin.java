@@ -1,8 +1,7 @@
-import exception.ResponseException;
-import ui.ServerClient;
-import websocket.NotificationHandler;
+package ui;
 
-import java.util.NavigableMap;
+import exception.ResponseException;
+
 import java.util.Scanner;
 
 public class ConsolePreLogin {
@@ -43,7 +42,7 @@ public class ConsolePreLogin {
                 loginDisplay();
                 break;
 //            case "game":
-//                ConsoleGame.start(serverClient,"white" );
+//                ui.ConsoleGame.start(serverClient,"white" );
 //                break;
             case "clear":
                 serverClient.clear();

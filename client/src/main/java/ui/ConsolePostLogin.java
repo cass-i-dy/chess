@@ -1,7 +1,9 @@
+package ui;
+
 import exception.ResponseException;
+import ui.ConsoleGame;
 import ui.ServerClient;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class ConsolePostLogin {
@@ -32,9 +34,16 @@ public class ConsolePostLogin {
                 System.out.println(serverClient.list());
                 gameDisplay();
                 break;
-            case "join", "observe":
+            case "join":
                 if(serverClient.join(option)){
                     ConsoleGame.start(serverClient, option[1], option[2]);
+                    break;
+                }
+                else{gameDisplay();}
+                break;
+            case "observe":
+                if(serverClient.join(option)){
+                    ConsoleGame.start(serverClient, option[1], "WHITE");
                     break;
                 }
                 else{gameDisplay();}

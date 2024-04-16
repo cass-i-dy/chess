@@ -8,6 +8,7 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthToken;
+import model.Game;
 import webSocketMessages.serverMessages.*;
 
 import javax.websocket.*;
@@ -45,7 +46,18 @@ public class WebSocketFacade extends Endpoint{
                 @Override
                 public void onMessage(String message) {
                     Notification notification = new Gson().fromJson(message, Notification.class);
-                    notificationHandler.notify(notification);
+                    ServerMessage.ServerMessageType serverMessageType = notification.getServerMessageType();
+                    if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)){
+                        LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+                        notificationHandler.loadGameNotify(loadGame);
+                    }
+                    if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)){
+                        ErrorMessage errorMessage  = new Gson().fromJson(message, ErrorMessage.class);
+                        notificationHandler.errorNotify(errorMessage);
+                    }
+                    if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
+                        notificationHandler.notify(notification);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -65,7 +77,7 @@ public class WebSocketFacade extends Endpoint{
         try {
             var joinPlayer = new JoinPlayer(authToken.getToken());
             joinPlayer.setGameID(gameID);
-            joinPlayer.setUser(authToken.getToken());
+            joinPlayer.setUser(authToken.getName());
             joinPlayer.setPlayerColor(playerColor);
 
             this.authToken = authToken;
@@ -75,9 +87,12 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void joinObserve(String gameID, String playerColor, AuthToken authToken) {
+    public void joinObserve(String gameID, ChessGame.TeamColor playerColor, AuthToken authToken) {
         try {
             var joinPlayer = new JoinPlayer(authToken.getToken());
+            joinPlayer.setGameID(gameID);
+            joinPlayer.setUser(authToken.getName());
+            joinPlayer.setPlayerColor(playerColor);
             this.authToken = authToken;
             this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
         } catch (IOException e) {

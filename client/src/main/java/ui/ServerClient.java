@@ -9,7 +9,10 @@ import model.AuthToken;
 import model.Game;
 import model.User;
 import server.ServerFacade;
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
@@ -29,6 +32,7 @@ public class ServerClient extends NotificationHandler {
 
 
 
+
     public ServerClient(String serverUrl) throws ResponseException {
         serverFacade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
@@ -36,6 +40,33 @@ public class ServerClient extends NotificationHandler {
 
     }
 
+    public void notify(Notification notification) {
+        this.notification = notification;
+
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)){
+            LoadGame loadGame = new Gson().fromJson(notification.getMessage(), LoadGame.class);
+            Game game = new Gson().fromJson(loadGame.getGame(), Game.class);
+            chessGame = game.getChessGame();
+        }
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)){
+            ErrorMessage errorMessage  = new Gson().fromJson(notification.getMessage(), ErrorMessage.class);
+            System.out.println(errorMessage.getMessage());
+        }
+        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
+            System.out.println(notification.getMessage());
+        }
+
+    }
+
+    public void loadGameNotify(LoadGame loadGame){
+        Game game = new Gson().fromJson(loadGame.getGame(), Game.class);
+        chessGame = game.getChessGame();
+        ConsoleGame.printGame(chessGame.getBoard());
+    }
+
+    public void errorNotify(ErrorMessage errorMessage){
+        System.out.println(errorMessage.getMessage());
+    }
     public ChessGame getChessGame(){
         return chessGame;
     }
@@ -130,8 +161,8 @@ public class ServerClient extends NotificationHandler {
         }
         if (params.length == 2) {
             System.out.println("observing game");
-//            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-            ws.joinObserve(params[1], "WHITE", authToken);
+            WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+            ws.joinObserve(params[1], ChessGame.TeamColor.WHITE, authToken);
             return true;
         } else {
             if (params[2].toUpperCase().equals("WHITE")) {
@@ -150,8 +181,8 @@ public class ServerClient extends NotificationHandler {
                 game.setPlayerColor("BLACK");
                 try {
                     serverFacade.join(game);
-//                    ws.joinUser(params[1], ChessGame.TeamColor.BLACK, authToken);
-                    chessGame = ws.getGame();
+                    WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
+                    ws.joinUser(params[1], ChessGame.TeamColor.BLACK, authToken);
                     System.out.println("Joined Game");
                 } catch (ResponseException e) {
                     System.out.println("black player already assigned");
@@ -213,9 +244,8 @@ public class ServerClient extends NotificationHandler {
             return """
                     - redraw chess board
                     - leave
-                    - make move <number> <letter>
+                    - make move
                     - resign
-                    - highlight legal moves
                     """;
         }
     }
