@@ -44,7 +44,7 @@ public class ConsoleGame {
 
 
 
-    public static void start(ServerClient server, String gameID, String color) throws ResponseException {
+    public static void start(ServerClient server, String gameID, String color, Boolean allowed) throws ResponseException {
         serverClient = server;
         if (color.equalsIgnoreCase("BLACK")) {
             reversed = true;
@@ -56,21 +56,47 @@ public class ConsoleGame {
 //        board.resetBoard();
 //        chessGame.setBoard(board);
 //        printGame(serverClient.getChessGame().getBoard());
-        displayOptions();
+        if (allowed){
+        displayOptions();}
+        else{
+            displayObserveOptions();
+        }
     }
 
+    public static void displayObserveOptions() throws ResponseException {
+        System.out.println("Type 'help' to see game options");
+        String option = ConsolePostLogin.scanner.nextLine();
+        String[] parts = option.split("\\s+");
+        processObserveAction(parts);
+    }
+
+
     public static void displayOptions() throws ResponseException {
-//        board = serverClient.getChessGame().getBoard();
-//        printGame(board);
-//        System.out.println(serverClient.getNotification().toString());
-//            processNotification(serverClient.getNotification());
             System.out.println("Type 'help' to see game options");
             String option = ConsolePostLogin.scanner.nextLine();
             String[] parts = option.split("\\s+");
             processGameAction(parts);
-
         }
 
+    public static void processObserveAction(String[] option) throws ResponseException {
+        switch (option[0].toLowerCase()) {
+            case "redraw":
+                printGame(serverClient.getChessGame().getBoard());
+                displayOptions();
+                break;
+            case "leave":
+                serverClient.leave(id);
+                ConsolePostLogin.start(serverClient);
+                break;
+            case "help":
+                System.out.println(serverClient.help("O"));
+                displayOptions();
+                break;
+            default:
+                System.out.print("Invalid Option");
+                displayOptions();
+                break;
+        }}
 
     public static void processGameAction(String[] option) throws ResponseException {
         switch (option[0].toLowerCase()) {
@@ -86,6 +112,7 @@ public class ConsoleGame {
                 makeDisplay();
                 break;
             case "resign":
+                serverClient.resign(id);
                 ConsolePostLogin.gameDisplay();
                 break;
             case "help":
@@ -110,13 +137,17 @@ public class ConsoleGame {
         }
         if (!reversed) {
             int startCol = colInt(startParts[0]);
-            tempPosition = new ChessPosition(9 - Integer.parseInt( startParts[1]), startCol);
+            tempPosition = new ChessPosition(Integer.parseInt(startParts[1]), startCol);
         }
         else{
             int startCol = colInt(startParts[0]);
             tempPosition = new ChessPosition(Integer.parseInt( startParts[1]), startCol);
         }
         ChessPiece chessPiece = serverClient.getChessGame().getBoard().getPiece(tempPosition);
+        if (chessPiece == null){
+            System.out.println("No piece present");
+            makeDisplay();
+        }
         viewPossibleMoves(tempPosition);
         System.out.println("Ending position: ");
         String endOption = ConsolePostLogin.scanner.nextLine();
@@ -130,7 +161,7 @@ public class ConsoleGame {
         }
         int endCol = colInt(endParts[0]);
         ChessPosition endPosition = new ChessPosition(Integer.parseInt(endParts[1]), endCol);
-        serverClient.makeMove(tempPosition,endPosition, chessPiece.getPieceType());
+        serverClient.makeMove(id, tempPosition,endPosition, chessPiece.getPieceType());
         displayOptions();
     }
 
@@ -217,10 +248,14 @@ public class ConsoleGame {
 
     private static void drawChessBoard(PrintStream out) {
         for (int boardRow = 0; boardRow < 8; ++boardRow){
-            colNumbers(out, boardRow);
+            int row =  colNumbers(out, boardRow);
             for (int boardCol = 0; boardCol < 8; ++boardCol) {
                 if (!(positions.isEmpty())) {
-                    ChessPosition testPosition = new ChessPosition(boardRow+1, boardCol+1);
+                    ChessPosition testPosition;
+                    if (!reversed){
+                    testPosition = new ChessPosition(row, boardCol+1);}
+                    else{
+                        testPosition = new ChessPosition(row, 8-boardCol);}
                     if (positions.contains(testPosition)) {
                         printSquare(out, boardRow, boardCol, "YES");
                     }
@@ -279,11 +314,11 @@ public class ConsoleGame {
     private static void checkPiece(PrintStream out, int row, int col){
         ChessPiece piece;
         if (!reversed){
-            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(8-row, 8-col));
+            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(8-row, col+1));
 
         }
         else {
-            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(row + 1, col + 1));
+            piece = serverClient.getChessGame().getBoard().getPiece(new ChessPosition(row + 1, 8 - col));
         }
         if (piece == null) {
             printRedPlayer(out, " ");
@@ -322,15 +357,19 @@ public class ConsoleGame {
         return null;
     }
 
-    private static void colNumbers(PrintStream out, int boardRow){
+    private static int colNumbers(PrintStream out, int boardRow){
         String number;
+        int row;
         if (!reversed) {
             number = String.valueOf(8- boardRow);
+            row =  8 -boardRow;
         }
         else {
             number = String.valueOf(boardRow + 1);
+            row =  boardRow + 1;
         }
         drawHeader(out, number);
+        return row;
     }
 
     private static void setBlack(PrintStream out) {

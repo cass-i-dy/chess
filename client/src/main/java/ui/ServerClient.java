@@ -193,10 +193,11 @@ public class ServerClient extends NotificationHandler {
         return true;
     }
 
-    public void makeMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion){
+    public void makeMove(String gameID, ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion){
         try {
         WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-        ws.makeMove(startPosition, endPosition, promotion,  authToken);}
+        ws.makeMove(gameID, startPosition, endPosition, null,  authToken);}
+
         catch (Exception e) {
             System.out.println("invalid");
         }
@@ -205,7 +206,7 @@ public class ServerClient extends NotificationHandler {
     public void leave(String id){
         try {
             WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-            ws.leave(id);
+            ws.leave(id, authToken);
         } catch (Exception e){
             System.out.println("invalid");
         }
@@ -214,7 +215,7 @@ public class ServerClient extends NotificationHandler {
     public void resign(String id){
         try {
             WebSocketFacade ws = new WebSocketFacade(serverUrl, this);
-            ws.resign(id);
+            ws.resign(id, authToken);
         }
         catch (Exception e){
             System.out.println("Error");
@@ -238,6 +239,12 @@ public class ServerClient extends NotificationHandler {
                     - observe <gameid>
                     - quit
                     - logout
+                    """;
+        }
+        else if (menu.equals("O")){
+            return """
+                    - redraw chess board
+                    - leave
                     """;
         }
         else {

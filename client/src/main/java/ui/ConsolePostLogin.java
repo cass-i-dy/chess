@@ -36,14 +36,14 @@ public class ConsolePostLogin {
                 break;
             case "join":
                 if(serverClient.join(option)){
-                    ConsoleGame.start(serverClient, option[1], option[2]);
+                    ConsoleGame.start(serverClient, option[1], option[2], true);
                     break;
                 }
                 else{gameDisplay();}
                 break;
             case "observe":
                 if(serverClient.join(option)){
-                    ConsoleGame.start(serverClient, option[1], "WHITE");
+                    ConsoleGame.start(serverClient, option[1], "WHITE", false);
                     break;
                 }
                 else{gameDisplay();}

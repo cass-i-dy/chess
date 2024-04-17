@@ -16,10 +16,7 @@ import java.net.URI;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.LeaveGame;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.ResignGame;
+import webSocketMessages.userCommands.*;
 
 
 public class WebSocketFacade extends Endpoint{
@@ -89,21 +86,22 @@ public class WebSocketFacade extends Endpoint{
 
     public void joinObserve(String gameID, ChessGame.TeamColor playerColor, AuthToken authToken) {
         try {
-            var joinPlayer = new JoinPlayer(authToken.getToken());
-            joinPlayer.setGameID(gameID);
-            joinPlayer.setUser(authToken.getName());
-            joinPlayer.setPlayerColor(playerColor);
+            var joinObserve = new JoinObserve(authToken.getToken());
+            joinObserve.setGameID(gameID);
+            joinObserve.setUser(authToken.getName());
+            joinObserve.setPlayerColor(playerColor);
             this.authToken = authToken;
-            this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
+            this.session.getBasicRemote().sendText(new Gson().toJson(joinObserve));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void makeMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion, AuthToken authToken){
+    public void makeMove(String gameID, ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotion, AuthToken authToken){
         try {
             var make = new MakeMove(authToken.getToken());
             make.setChessMove(new ChessMove(startPosition, endPosition, promotion));
+            make.setGameID(gameID);
             this.authToken = authToken;
             this.session.getBasicRemote().sendText(new Gson().toJson(make));
         } catch (IOException e) {
@@ -111,20 +109,22 @@ public class WebSocketFacade extends Endpoint{
         }
     }
 
-    public void leave(String gameID) {
+    public void leave(String gameID, AuthToken authToken) {
         try{
         var leaveGame = new LeaveGame(authToken.getToken());
         leaveGame.setGameID(gameID);
+        this.authToken = authToken;
         this.session.getBasicRemote().sendText(new Gson().toJson(leaveGame));}
         catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void resign(String gameID) {
+    public void resign(String gameID, AuthToken authToken) {
         try {
-            var resignGame = new ResignGame(gameID);
+            var resignGame = new ResignGame(authToken.getToken());
             resignGame.setGameID(gameID);
+            this.authToken = authToken;
             this.session.getBasicRemote().sendText(new Gson().toJson(resignGame));}
         catch (IOException e) {
             throw new RuntimeException(e);

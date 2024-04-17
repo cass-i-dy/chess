@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.MySQLDataAccessAuth;
@@ -21,6 +22,7 @@ import webSocketMessages.userCommands.*;
 //import ConnectionManager;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @WebSocket
 public class WebSocketHandler {
@@ -104,9 +106,6 @@ public class WebSocketHandler {
             if (game == null) {
                 throw new WebsocketException("gameID doesn't exist");
             }
-            if (game.getBlack() == null && game.getWhite() == null) {
-                throw new WebsocketException("Game not Valid");
-            }
             if (game.getVictor() != null){
                 throw new WebsocketException("game over");
             }
@@ -143,10 +142,10 @@ public class WebSocketHandler {
                 throw new WebsocketException("gameID doesn't exist");
             }
             String teamColor = null;
-            if (game.getWhite().equals(authToken.getName())){
+            if ((teamColor == null)&&(game.getWhite().equals(authToken.getName()))){
                 teamColor = "WHITE";
             }
-            if (game.getBlack().equals(authToken.getName())){
+            if ((teamColor == null) && (game.getBlack().equals(authToken.getName()))){
                 teamColor = "BLACK";
             }
             if (teamColor == null){
@@ -166,6 +165,11 @@ public class WebSocketHandler {
             if (!(game.getChessGame().validMoves(possibleMove.move.getStartPosition()).contains(possibleMove.move))) {
                 throw new WebsocketException("Move not valid");
             }
+//            Collection<ChessMove> moves = game.getChessGame().validMoves(possibleMove.move.getStartPosition());
+//            if (!checkMoves(moves, possibleMove.move)){
+//                throw new WebsocketException("Move not valid");
+//            }
+
             game.getChessGame().makeMove(possibleMove.move);
             gameAccess.updateGame(game);
             diplayGame = game;
@@ -189,6 +193,15 @@ public class WebSocketHandler {
             connections.broadcastOnce(possibleMove.authToken, response, possibleMove.gameID);
         }
         return diplayGame;
+    }
+
+    public Boolean checkMoves(Collection<ChessMove> moves, ChessMove possibleMove){
+        for (ChessMove move : moves) {
+            if ((move.getEndPosition().getRow() == possibleMove.getEndPosition().getRow()) && (move.getEndPosition().getColumn() == possibleMove.getEndPosition().getColumn())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void leaveGame(String inputMessage, Session session){
