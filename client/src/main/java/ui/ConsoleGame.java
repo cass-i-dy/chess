@@ -112,8 +112,7 @@ public class ConsoleGame {
                 makeDisplay();
                 break;
             case "resign":
-                serverClient.resign(id);
-                ConsolePostLogin.gameDisplay();
+                resignMenu();
                 break;
             case "help":
                 System.out.println(serverClient.help(""));
@@ -123,6 +122,18 @@ public class ConsoleGame {
                 System.out.print("Invalid Option");
                 displayOptions();
                 break;
+        }
+    }
+
+    public static void resignMenu() throws ResponseException {
+        System.out.println("Confirm (Y/N)");
+        String startOption = ConsolePostLogin.scanner.nextLine();
+        if (startOption.toLowerCase().equals("y")){
+            serverClient.resign(id);
+            displayOptions();
+        }
+        else {
+            displayOptions();
         }
     }
 
@@ -148,7 +159,10 @@ public class ConsoleGame {
             System.out.println("No piece present");
             makeDisplay();
         }
-        viewPossibleMoves(tempPosition);
+        System.out.println("View Possible Moves? (Y/N)");
+        String viewOption = ConsolePostLogin.scanner.nextLine();
+        if (viewOption.toLowerCase().equals("y")){
+        viewPossibleMoves(tempPosition);}
         System.out.println("Ending position: ");
         String endOption = ConsolePostLogin.scanner.nextLine();
         String[] endParts = endOption.split("\\s+");

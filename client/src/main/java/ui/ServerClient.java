@@ -41,20 +41,8 @@ public class ServerClient extends NotificationHandler {
     }
 
     public void notify(Notification notification) {
-        this.notification = notification;
+        System.out.println(notification.getMessage());
 
-        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)){
-            LoadGame loadGame = new Gson().fromJson(notification.getMessage(), LoadGame.class);
-            Game game = new Gson().fromJson(loadGame.getGame(), Game.class);
-            chessGame = game.getChessGame();
-        }
-        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)){
-            ErrorMessage errorMessage  = new Gson().fromJson(notification.getMessage(), ErrorMessage.class);
-            System.out.println(errorMessage.getMessage());
-        }
-        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
-            System.out.println(notification.getMessage());
-        }
 
     }
 

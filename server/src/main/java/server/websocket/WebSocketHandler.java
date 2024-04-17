@@ -177,6 +177,17 @@ public class WebSocketHandler {
                     = String.format("Move was Made");
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken.getToken(), notification, possibleMove.gameID);
+
+            if (game.getChessGame().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                var checkMessageWhite = String.format("White in CheckMate");
+                var whiteNotification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, checkMessageWhite);
+                connections.broadcast(authToken.getToken(), whiteNotification, possibleMove.gameID);
+            }
+            if (game.getChessGame().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                var checkMessageBlack = String.format("Black in CheckMate");
+                var blackNotification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, checkMessageBlack);
+                connections.broadcast(authToken.getToken(), blackNotification, possibleMove.gameID);
+            }
             if (teamColor.equals("WHITE")){
             game.getChessGame().setTeamTurn(ChessGame.TeamColor.BLACK);}
             else{
